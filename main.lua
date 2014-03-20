@@ -1,7 +1,7 @@
 local car = require 'car'
 local RigidBody = car.RigidBody
 function love.load()
-	box = RigidBody:new(200,400,0,"95px-Tank-GTA2.png",1,false)
+	box = RigidBody:new(200,400,math.pi*2,"95px-Tank-GTA2.png",.8,false)
    throttle,steering,brakes = 0,0,0
 
 end
