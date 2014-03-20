@@ -109,8 +109,9 @@ function Wheel:__init(position, radius)
     self.radius = radius
     self.position = position
     self:setSteeringAngle(0)
-    self.forwardAxis = Vector:new(0,1)
+    self.forwardAxis = Vector:new(0,0)
     self.sideAxis = Vector:new(0,0)
+    self:setSteeringAngle(0)
     self.torque,self.speed,self.inertia = 0,0,radius^2
 end
 
@@ -126,13 +127,7 @@ function Wheel:setSteeringAngle(newAngle)
 end
 
 function Wheel:calculateForce(relativeGroundSpeed, dt)
-    print("speed", self.speed)
-    print("radius", self.radius)
-    print("forwardAxis", self.forwardAxis)
-
     local patchSpeed = self.forwardAxis:scalarMult(-1 * self.speed * self.radius)
-    print("patchSpeed", patchSpeed)
-    print()
     local velocityDifference = relativeGroundSpeed + patchSpeed
     local forwardMag = 0
     local sideVelocity = velocityDifference:projection(self.sideAxis)
@@ -166,8 +161,8 @@ end
 -- local r = RigidBody(x,y,width,height) -- Alias to RigidBody:new
 -- print(r) -- print the RigidBody properties
 --
-function RigidBody:__init(x, y,rotation, image, mass, allWheel)
-    self.x, self.y, self.angle = x, y, rotation
+function RigidBody:__init(x, y, angle, image, mass, allWheel)
+    self.x, self.y, self.angle = x, y, angle
     self.image = love.graphics.newImage(image)
 
     self.velocity = Vector:new(0,0);
@@ -191,12 +186,13 @@ function RigidBody:__init(x, y,rotation, image, mass, allWheel)
         Wheel:new(Vector:new(self.halfsies.x, -self.halfsies.y), .5),
         Wheel:new(Vector:new(-self.halfsies.x, -self.halfsies.y), .5)
     }
+    self.pivot = Vector:new(self.halfsies.x, -self.halfsies.y)
 end
 
 function RigidBody:setSteering (steering)
     local steeringLock = 0.75
-    self.wheels[1]:setSteeringAngle(-steering * steeringLock);
-    self.wheels[2]:setSteeringAngle(-steering * steeringLock);
+    self.wheels[1]:setSteeringAngle(steering * steeringLock);
+    self.wheels[2]:setSteeringAngle(steering * steeringLock);
 end
 
 function RigidBody:setThrottle(throttle)
@@ -219,7 +215,7 @@ end
 
 function RigidBody:update(dt)
     --print("update") 
-    local dt = dt*7
+    local dt = dt*2
     --wheels
     for i, wheel in ipairs(self.wheels) do
         local worldWheelOffset = self:relativeToWorld(wheel.position)
@@ -283,7 +279,7 @@ end
 
 function RigidBody:addForce(worldForce, worldOffset)
     self.forces = self.forces + worldForce
-    self.torque = self.torque + crossProduct(worldOffset,worldForce)
+    self.torque = self.torque + crossProduct(worldOffset, worldForce)
 end
 
 car = {
