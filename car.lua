@@ -108,7 +108,6 @@ end
 function Wheel:__init(position, radius)
     self.radius = radius
     self.position = position
-    self:setSteeringAngle(0)
     self.forwardAxis = Vector:new(0,0)
     self.sideAxis = Vector:new(0,0)
     self:setSteeringAngle(0)
@@ -186,13 +185,13 @@ function RigidBody:__init(x, y, angle, image, mass, allWheel)
         Wheel:new(Vector:new(self.halfsies.x, -self.halfsies.y), .5),
         Wheel:new(Vector:new(-self.halfsies.x, -self.halfsies.y), .5)
     }
-    self.pivot = Vector:new(self.halfsies.x, -self.halfsies.y)
+    self.pivot = Vector:new(self.halfsies.x, self.image:getHeight()*.7)
 end
 
 function RigidBody:setSteering (steering)
     local steeringLock = 0.75
-    self.wheels[1]:setSteeringAngle(steering * steeringLock);
-    self.wheels[2]:setSteeringAngle(steering * steeringLock);
+    self.wheels[1]:setSteeringAngle(-steering * steeringLock);
+    self.wheels[2]:setSteeringAngle(-steering * steeringLock);
 end
 
 function RigidBody:setThrottle(throttle)
@@ -238,7 +237,7 @@ function RigidBody:update(dt)
     -- self.x = self.x +  (self.velocity.x * dt);
     -- self.y = self.y + (self.velocity.y * dt);
 
-    local acceleration = self.forces:scalarMult(1/self.mass)
+    local acceleration = self.forces:scalarMult(1/self.mass * 1.3)
     self.velocity = self.velocity + (acceleration:scalarMult(dt))
     self.x = self.x +  (self.velocity.x * dt);
     self.y = self.y + (self.velocity.y * dt);

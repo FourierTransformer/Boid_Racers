@@ -1,7 +1,7 @@
 local car = require 'car'
 local RigidBody = car.RigidBody
 function love.load()
-	box = RigidBody:new(200, 400, math.pi, "95px-Tank-GTA2.png", 1, false)
+	box = RigidBody:new(100, 100, 0, "95px-Tank-GTA2.png", 1, false)
    throttle, steering, brakes = 0, 0, 0
 
 end
@@ -14,7 +14,7 @@ function love.update(dt)
 end
 
 function love.draw()
-   love.graphics.draw(box.image, box.x, box.y, box.angle, 1, 1, box.pivot.x, box.pivot.y)
+   love.graphics.draw(box.image, box.x % love.graphics.getWidth(), box.y % love.graphics.getHeight(), box.angle, 1, 1, box.pivot.x, box.pivot.y)
    love.graphics.print(tostring(box), 0, 0)
 end
 
@@ -41,10 +41,18 @@ function love.keyreleased(key)
       brakes = 0;
    end
    if key == "left" then
-      steering = 0;
+      if love.keyboard.isDown("right") then
+         steering = 1
+      else
+         steering = 0
+      end
    end
    if key == "right" then
-      steering = 0;
+      if love.keyboard.isDown("left") then
+         steering = -1
+      else
+         steering = 0
+      end
    end
 end
 
