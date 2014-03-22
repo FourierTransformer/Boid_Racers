@@ -11,10 +11,13 @@ function love.load()
     -- CONSTANTS BITCHES
     love.window.setTitle("Boid Racers")
     local numberVerts = 200
-    scale = 1
-    local width, height = love.window.getDimensions( )
+    scale = 10
+    width, height = love.window.getDimensions( )
     local roadRadius = 20
 
+    -- current camera position.
+    x = 0
+    y = 0
 
     -- Create points
     local points = {}
@@ -58,13 +61,27 @@ function love.load()
 
 
     -- generate the road
-    roadCanvas = generateRoadCanvas(roadRadius)
-    print("Road Texture Generation: ", os.clock() - tick)
+    roadCanvas, minimapCanvas = generateRoadMinimapCanvas(roadRadius)
+    print("Road/minimap Texture Generation: ", os.clock() - tick)
 
 end
 
 function love.update()
+    if love.keyboard.isDown('up') then
+        y = y - 10
+    end
 
+    if love.keyboard.isDown('down') then
+        y = y + 10
+    end
+
+    if love.keyboard.isDown('right') then
+        x = x + 10;
+    end
+
+    if love.keyboard.isDown('left') then
+        x = x - 10;
+    end
 end
 
 -- draw ALL THE THINGS
@@ -80,7 +97,7 @@ function love.draw()
     end
 
     -- draw the roads!
-    love.graphics.draw(roadCanvas, 0, 0)
+    love.graphics.draw(roadCanvas, 0 - x, 0 - y)
 
     -- draw the start and end of the path
     love.graphics.setPointSize( 10 )
@@ -94,6 +111,24 @@ function love.draw()
     for i, v in ipairs(path) do
         love.graphics.point(v.x, v.y)
     end
+
+
+
+    -- draw the minimap
+    local radius = 100
+    local offset = 20
+    
+    -- bg and outline
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.circle("fill", radius + offset, height - radius - offset, radius + 2)
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.circle("fill", radius + offset, height - radius - offset, radius)
+
+    -- and the actual map
+    love.graphics.setColor(255, 255, 255)
+    love.graphics.setStencil(minimapStencil)
+    love.graphics.draw(minimapCanvas, 0 - x/scale + 100, 0 - y/scale + (height-200))
+    love.graphics.setStencil()
 
 end
 
@@ -115,9 +150,8 @@ function halton(i, b)
     return result
 end
 
-function generateRoadCanvas(roadRadius)
+function generateRoadMinimapCanvas(roadRadius)
     -- draw the road to an offscreen canvas
-    local width, height = love.window.getDimensions()
     local borderSize = roadRadius / 10 -- for roadRadius 20 this is 2
     local roadCanvas = love.graphics.newCanvas(width*scale, height*scale)
     love.graphics.setCanvas(roadCanvas)
@@ -171,8 +205,25 @@ function generateRoadCanvas(roadRadius)
     -- add noise? This is gonna get cray
     -- it got cray. I killed it because slowdown was tremendous. Might revisit later.
 
-    -- re-enable drawing to the main screen
+    -- draw out the minimap
+    local minimapCanvas = love.graphics.newCanvas(width, height)
+    love.graphics.setCanvas(minimapCanvas)
+
+    -- roads within the mini
+    for j = 1, #road do
+        love.graphics.setColor(90,90,90)
+        love.graphics.setLineWidth(10)
+        love.graphics.line(road[j][1]/scale, road[j][2]/scale, road[j][3]/scale, road[j][4]/scale)
+    end
+
+    -- and back to the screen!
     love.graphics.setCanvas()
 
-    return roadCanvas
+    return roadCanvas, minimapCanvas
+end
+
+function minimapStencil()
+    local radius = 100
+    local offset = 20
+    love.graphics.circle("fill", radius + offset, height - radius - offset, radius)
 end

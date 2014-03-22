@@ -14,8 +14,11 @@ function love.update(dt)
 end
 
 function love.draw()
-   love.graphics.draw(box.image, box.x % love.graphics.getWidth(), box.y % love.graphics.getHeight(), box.angle, 1, 1, box.pivot.x, box.pivot.y)
+   -- dont ever really use % for this. IT kinda sucks and is really hacky. just saying.
+   love.graphics.draw(box.image, box.x % love.graphics.getWidth(), (-box.y) % love.graphics.getHeight(), box.angle, 1, 1, box.pivot.x, box.pivot.y)
+   -- love.graphics.draw(box.image, box.x % love.graphics.getWidth(), box.y % love.graphics.getHeight())
    love.graphics.print(tostring(box), 0, 0)
+   -- love.graphics.print("Steering: " .. steering, 0, 50)
 end
 
 

@@ -46,7 +46,7 @@ Vector.__mult = function(a, b) return Vector:new(a.x * b.x, a.y * b.y) end
 Vector.__sub = function(a, b) return Vector:new(a.x - b.x, a.y - b.y) end
 Vector.__div = function(a, b) return Vector:new(a.x / b.x, a.y / b.y) end
 Vector.__tostring = function(v)
-return (('Vector :  %d  %d'):format(tostring(v.x), tostring(v.y)))
+return (('Vector :  %f  %f'):format(tostring(v.x), tostring(v.y)))
 end
 
 
@@ -69,8 +69,7 @@ end
 function Vector:rotate(angle)
     local x = (self.x*math.cos(angle)) - (self.y*math.sin(angle))
     local y = (self.x*math.sin(angle)) + (self.y*math.cos(angle))
-
-    return Vector:new(x,y)
+    return Vector:new(x, y)
 end
 
 function Vector:length()
@@ -93,7 +92,7 @@ end
 function Vector:projection(b)
     -- local bUnit = b:unit()
     -- local scalar = self:dot(b) / b:length()
-    -- return bUnit:scalarMult(scalar)
+    -- return bUnit:scalarMult(scalar), self:dot(b)
     local dot = self:dot(b)
     return b:scalarMult(dot), dot
 end
@@ -102,13 +101,17 @@ end
 local Wheel = class()
 Wheel.__eq = function(a, b) return (a.p1 == b.p1 and a.p2 == b.p2) end
 Wheel.__tostring = function(r)
-return (('RigidBody :  %d  %d\n Velocity : %d  %d \nAcceleration : %d  %d\n'):format(tostring(r.x), tostring(r.y),tostring(r.velocity.x), tostring(r.velocity.y),tostring(r.acceleration.x), tostring(r.acceleration.y)))
+return (('RigidBody :  %d  %d\n Velocity : %d  %d \nAcceleration : %d  %d\n'):format(
+        tostring(r.x), tostring(r.y), 
+        tostring(r.velocity.x), tostring(r.velocity.y),
+        tostring(r.acceleration.x), tostring(r.acceleration.y)
+        ))
 end
 
 function Wheel:__init(position, radius)
     self.radius = radius
     self.position = position
-    self.forwardAxis = Vector:new(0,0)
+    -- self.forwardAxis = Vector:new(0,0)
     self.sideAxis = Vector:new(0,0)
     self:setSteeringAngle(0)
     self.torque,self.speed,self.inertia = 0,0,radius^2
@@ -125,6 +128,13 @@ function Wheel:setSteeringAngle(newAngle)
     self.sideAxis = self.forwardAxis:rotate(newAngle)
 end
 
+function sign(num)
+    if num > 0 then return 1
+    elseif num < 0 then return -1
+    else return 0
+    end
+end
+
 function Wheel:calculateForce(relativeGroundSpeed, dt)
     local patchSpeed = self.forwardAxis:scalarMult(-1 * self.speed * self.radius)
     local velocityDifference = relativeGroundSpeed + patchSpeed
@@ -134,8 +144,14 @@ function Wheel:calculateForce(relativeGroundSpeed, dt)
     local responseForce = sideVelocity:scalarMult(-2)
     responseForce = responseForce - forwardVelocity
 
+
+    local preSign = sign(self.speed)
+
     self.torque = self.torque + (forwardMag * self.radius)
     self.speed = self.speed + (self.torque / self.inertia * dt)
+    if (preSign ~= 0 and sign(self.speed) ~= preSign) then
+        self.speed = 0
+    end
     self.torque = 0
     return responseForce
 end
@@ -145,7 +161,13 @@ end
 local RigidBody = class()
 RigidBody.__eq = function(a, b) return (a.p1 == b.p1 and a.p2 == b.p2) end
 RigidBody.__tostring = function(r)
-    return (('RigidBody :  %d  %d\n Velocity : %d  %d \nAcceleration : %d  %d\n'):format(tostring(r.x), tostring(r.y),tostring(r.velocity.x), tostring(r.velocity.y),tostring(r.acceleration.x), tostring(r.acceleration.y)))
+    return (('RigidBody :  %d  %d\n Velocity : %d  %d \nAcceleration : %d  %d\n angularVelocity: %f\n torque: %d'):format(
+            tostring(r.x), tostring(r.y),
+            tostring(r.velocity.x), tostring(r.velocity.y),
+            tostring(r.acceleration.x), tostring(r.acceleration.y),
+            tostring(r.angularVelocity),
+            tostring(r.torque)
+            ))
 end
 
 --- Creates a new `RigidBody`
@@ -168,8 +190,9 @@ function RigidBody:__init(x, y, angle, image, mass, allWheel)
     self.acceleration = Vector:new(0,0);
     self.forces = Vector:new(0,0);
 
-    self.mass = mass;
-    self.halfsies = Vector:new(self.image:getWidth()/2,self.image:getHeight()/2)
+    self.mass = 5;
+    -- self.halfsies = Vector:new(self.image:getWidth()/2,self.image:getHeight()/2)
+    self.halfsies = Vector:new(1.5, 1.5)
 
     --angular props
     -- self.angle = 0; 
@@ -185,13 +208,13 @@ function RigidBody:__init(x, y, angle, image, mass, allWheel)
         Wheel:new(Vector:new(self.halfsies.x, -self.halfsies.y), .5),
         Wheel:new(Vector:new(-self.halfsies.x, -self.halfsies.y), .5)
     }
-    self.pivot = Vector:new(self.halfsies.x, self.image:getHeight()*.7)
+    self.pivot = Vector:new(self.image:getWidth()/2, self.image:getHeight()*.75)
 end
 
 function RigidBody:setSteering (steering)
     local steeringLock = 0.75
-    self.wheels[1]:setSteeringAngle(-steering * steeringLock);
-    self.wheels[2]:setSteeringAngle(-steering * steeringLock);
+    self.wheels[1]:setSteeringAngle(steering * steeringLock);
+    self.wheels[2]:setSteeringAngle(steering * steeringLock);
 end
 
 function RigidBody:setThrottle(throttle)
@@ -214,7 +237,7 @@ end
 
 function RigidBody:update(dt)
     --print("update") 
-    local dt = dt*2
+    -- local dt = dt*2
     --wheels
     for i, wheel in ipairs(self.wheels) do
         local worldWheelOffset = self:relativeToWorld(wheel.position)
@@ -227,7 +250,7 @@ function RigidBody:update(dt)
         -- print("relativeResponseForce",relativeResponseForce)
         local worldReponseForce = self:relativeToWorld(relativeResponseForce)
         -- print("worldReponseForce", worldReponseForce)
-        self:addForce(worldReponseForce,worldWheelOffset)
+        self:addForce(worldReponseForce, worldWheelOffset)
     end 
     --not wheels
     --  self.acceleration.x = self.forces.x / self.mass
@@ -237,23 +260,25 @@ function RigidBody:update(dt)
     -- self.x = self.x +  (self.velocity.x * dt);
     -- self.y = self.y + (self.velocity.y * dt);
 
-    local acceleration = self.forces:scalarMult(1/self.mass * 1.3)
+    local acceleration = self.forces:scalarMult(1/self.mass)
     self.velocity = self.velocity + (acceleration:scalarMult(dt))
     self.x = self.x +  (self.velocity.x * dt);
     self.y = self.y + (self.velocity.y * dt);
-    --print(self.forces)
     self.forces = Vector:new(0,0)
+
     --angular
-    -- print("torque", self.torque)
     local angularAcceleration = self.torque / self.inertia
     self.angularVelocity = self.angularVelocity + (angularAcceleration * dt)
     self.angle = self.angle + (self.angularVelocity * dt)
     self.torque = 0;
+
+    -- don't look at this
+    -- if (self.velocity.x > 0) then self.velocity.x = self.velocity.x - 1 end
+    -- if (self.velocity.y > 0) then self.velocity.y = self.velocity.y - 1 end
+    -- if (self.angularVelocity > 0) then self.angularVelocity = self.angularVelocity - .001 end
 end
 
-function RigidBody:updateAcceleration(x,y)
-    --print("accel")
-
+function RigidBody:updateAcceleration(x, y)
     self.acceleration.x = x + self.acceleration.x;
     self.acceleration.y = y + self.acceleration.y;
 end
