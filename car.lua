@@ -138,7 +138,6 @@ end
 function Wheel:calculateForce(relativeGroundSpeed, dt)
     local patchSpeed = self.forwardAxis:scalarMult(-1 * self.speed * self.radius)
     local velocityDifference = relativeGroundSpeed + patchSpeed
-    local forwardMag = 0
     local sideVelocity = velocityDifference:projection(self.sideAxis)
     local forwardVelocity, forwardMag = velocityDifference:projection(self.forwardAxis)
     local responseForce = sideVelocity:scalarMult(-2)
@@ -192,7 +191,7 @@ function RigidBody:__init(x, y, angle, image, mass, allWheel)
 
     self.mass = 5;
     -- self.halfsies = Vector:new(self.image:getWidth()/2,self.image:getHeight()/2)
-    self.halfsies = Vector:new(1.5, 1.5)
+    self.halfsies = Vector:new(1.5, 4)
 
     --angular props
     -- self.angle = 0; 
@@ -209,6 +208,12 @@ function RigidBody:__init(x, y, angle, image, mass, allWheel)
         Wheel:new(Vector:new(-self.halfsies.x, -self.halfsies.y), .5)
     }
     self.pivot = Vector:new(self.image:getWidth()/2, self.image:getHeight()*.75)
+
+    -- just trying something new
+    self.rectx = -self.x
+    self.recty = -self.y
+    self.rectwidth = 2 * self.halfsies.x
+    self.rectheight = 2 * self.halfsies.y
 end
 
 function RigidBody:setSteering (steering)
@@ -236,9 +241,7 @@ function RigidBody:setBrakes(brakes)
 end
 
 function RigidBody:update(dt)
-    --print("update") 
-    -- local dt = dt*2
-    --wheels
+
     for i, wheel in ipairs(self.wheels) do
         local worldWheelOffset = self:relativeToWorld(wheel.position)
         -- print("worldWheelOffset: ", worldWheelOffset)
@@ -295,7 +298,6 @@ end
 
 function RigidBody:pointVelocity(worldOffset)
     local tangent = Vector:new(-worldOffset.y, worldOffset.x)
-    -- print("tangent", tangent)
     -- print("angular", self.angularVelocity)
     -- print("vel",self.velocity)
     return tangent:scalarMult(self.angularVelocity) + self.velocity

@@ -11,12 +11,16 @@ function love.update(dt)
    box:setThrottle(throttle)
    box:setBrakes(brakes)
    box:update(dt)
+   box.rectx = -box.x
+   box.recty = -box.y
 end
 
 function love.draw()
    -- dont ever really use % for this. IT kinda sucks and is really hacky. just saying.
-   love.graphics.draw(box.image, box.x % love.graphics.getWidth(), (-box.y) % love.graphics.getHeight(), box.angle, 1, 1, box.pivot.x, box.pivot.y)
+   love.graphics.draw(box.image, (-box.x) % love.graphics.getWidth(), (-box.y) % love.graphics.getHeight(), box.angle, 1, 1, box.pivot.x, box.pivot.y)
    -- love.graphics.draw(box.image, box.x % love.graphics.getWidth(), box.y % love.graphics.getHeight())
+   -- love.graphics.setColor(255, 255, 255)
+   love.graphics.rectangle('fill', box.rectx % love.graphics.getWidth(), box.recty % love.graphics.getHeight(), box.rectwidth, box.rectheight)
    love.graphics.print(tostring(box), 0, 0)
    -- love.graphics.print("Steering: " .. steering, 0, 50)
 end
