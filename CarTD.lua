@@ -193,6 +193,14 @@ function Car:draw(debug)
     end
 end
 
+function Car:getX()
+    return self.body:getX()
+end
+
+function Car:getY()
+    return self.body:getY()
+end
+
 CarTD = {
     Car = Car, 
     _VERSION = "SUPER-BETA"
