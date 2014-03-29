@@ -67,41 +67,48 @@ end
 
 -- 1 for up, -1 for brake, 0 for nothing
 function Wheel:updateDrive(driveControl)
-    local maxForward = 250
-    local maxBackward = -40
-    local maxForce = 300
-
-    -- determine new speed
-    local newSpeed = 0
-    if (driveControl == 1) then
-        newSpeed = maxForward
-    elseif (driveControl == -1) then
-        newSpeed = maxBackward
-    else
-        return
-    end
+    -- local maxForward = 250
+    -- local maxBackward = -40
+    -- local maxForce = 3000
 
     -- get current (forward) speed
     local forwardNormal_x, forwardNormal_y = self.body:getWorldVector(0, 1)
     local forwardVelocity_x, forwardVelocity_y = self:getForwardVelocity()
-    local currentSpeed = forwardNormal_x * forwardVelocity_x + forwardNormal_y * forwardVelocity_y
+    local forwardSpeed = math.sqrt(forwardVelocity_x^2 + forwardVelocity_y^2)
+    if forwardSpeed == 0 then
+        forwardSpeed = .01
+    end
+
+    -- determine new speed
+    if (driveControl == 1) then
+        
+        local force = 15000/(forwardSpeed-3625)+50
+        
+        self.body:applyForce(force * forwardNormal_x, force * forwardNormal_y, self.body:getWorldCenter())
+
+    elseif (driveControl == -1) then
+        local force = -100
+        self.body:applyForce(force * forwardNormal_x, force * forwardNormal_y, self.body:getWorldCenter())
+
+    else
+        return
+    end
+
+    -- local currentSpeed = forwardNormal_x * forwardVelocity_x + forwardNormal_y * forwardVelocity_y
 
     -- print("newspeed", newSpeed)
     -- print("currentSpeed", currentSpeed)
 
     -- apply force
-    local force = 0
-    -- if currentSpeed >= maxForward then -- added
-        -- force = 0                       -- added
-    if newSpeed > currentSpeed then
-        force = maxForce
-    elseif newSpeed < currentSpeed then
-        force = -maxForce
-    else
-        return
-    end
+    -- local force = 0
+    -- if newSpeed > currentSpeed then
+    --     force = maxForce
+    -- elseif newSpeed < currentSpeed then
+    --     force = -maxForce
+    -- else
+    --     return
+    -- end
 
-    self.body:applyForce(force * forwardNormal_x, force * forwardNormal_y, self.body:getWorldCenter())
 
 end
 
@@ -130,11 +137,19 @@ function Wheel:updateFriction()
 
     -- add some drag (so a car can stop on its own)
     local forward_x, forward_y = self:getForwardVelocity()
-    -- local forwardSpeed = math.sqrt(forward_x^2 + forward_y^2)
-    -- forward_x = forward_x / forwardSpeed
-    -- forward_y = forward_y / forwardSpeed
-    -- local dragForce = -1 * forwardSpeed
-    local dragForce = -.01
+    local forwardSpeed = math.sqrt(forward_x^2 + forward_y^2)
+    if forwardSpeed == 0 then
+        forwardSpeed = .01
+    end
+
+    love.window.setTitle("forwardSpeed" .. forwardSpeed/27*2.234 .. "mph", 20, 20)
+    -- print("forwardSpeed", forwardSpeed/27*2.234, "mph")
+    -- print("forwardSpeed", forwardSpeed, "px/s")
+
+    forward_x = forward_x / forwardSpeed
+    forward_y = forward_y / forwardSpeed
+    local dragForce = -.00005*forwardSpeed^3
+    -- print("dragForce", dragForce)
 
 
     -- self.body:applyForce( dragForce * forward_x, dragForce * forward_y, self.body:getWorldCenter())
@@ -155,7 +170,7 @@ function Car:__init(x, y, img, density)
                                               0, self.image:getHeight(),
                                               self.image:getWidth(), self.image:getHeight())
     self.fixture = love.physics.newFixture(self.body, self.shape, density or .1)
-    
+
     self.wheels = {
         -- these two are front tires
         Wheel:new(x, y + self.image:getHeight() * .75,  5, 12.5),
@@ -173,6 +188,12 @@ function Car:__init(x, y, img, density)
         love.physics.newWeldJoint(self.body, self.wheels[3].body, self.wheels[3].body:getX(), self.wheels[3].body:getY()),
         love.physics.newWeldJoint(self.body, self.wheels[4].body, self.wheels[4].body:getX(), self.wheels[4].body:getY())
     }
+
+    -- local x,y,mass,inertia = self.body:getMassData()
+    -- local newMass = 1500
+    -- inertia = inertia*(newMass/mass)
+    -- self.body:setMassData(x, y, newMass, inertia)
+    -- print("mass:", self.body:getMass())
 end
 
 function Car:update(steering, throttle)
@@ -184,13 +205,49 @@ function Car:update(steering, throttle)
 end
 
 function Car:draw(debug)
-    love.graphics.draw(tank.image, tank.body:getX(), tank.body:getY(), tank.body:getAngle())
+    love.graphics.setColor(255,255,255)
+
+    -- old school real cool
+    love.graphics.draw(self.image, self.body:getX(), self.body:getY(), self.body:getAngle())
+    love.graphics.setLineWidth(1)
     if debug then
         for i = 1, 4 do
-            love.graphics.polygon("line", tank.wheels[i].body:getWorldPoints(tank.wheels[i].shape:getPoints()))
+            love.graphics.polygon("line", self.wheels[i].body:getWorldPoints(self.wheels[i].shape:getPoints()))
         end
-        love.graphics.polygon("line", tank.body:getWorldPoints(tank.shape:getPoints()))
+        love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
     end
+
+    -- love.graphics.push()
+    -- local window_x, window_y = love.graphics.getDimensions()
+    -- love.graphics.translate(window_x/2, window_y/2)
+    -- love.graphics.rotate(self.body:getAngle())
+    -- local center_x, center_y = self.body:getLocalCenter()
+    -- love.graphics.translate(-center_x, -center_y)
+
+    -- love.graphics.draw(self.image, 0, 0)
+    -- if debug then
+    --     for i = 1, 4 do
+    --         love.graphics.push()
+    --         if i == 1 then
+    --             love.graphics.translate(0, self.image:getHeight()*.75)
+    --         elseif i == 2 then
+    --             love.graphics.translate(self.image:getWidth(), self.image:getHeight() * .75)
+    --         elseif i == 3 then
+    --             love.graphics.translate(0,0)
+    --         elseif i == 4 then
+    --             love.graphics.translate(self.image:getWidth(), 0)
+    --         end
+
+    --         if i == 1 or i == 2 then
+    --             love.graphics.rotate(self.wheels[i].body:getAngle())
+    --         end
+
+    --         love.graphics.polygon("line", self.wheels[i].shape:getPoints())
+    --         love.graphics.pop()
+    --     end
+    --     love.graphics.polygon("line", self.shape:getPoints())
+    -- end
+    -- love.graphics.pop()
 end
 
 function Car:getX()
