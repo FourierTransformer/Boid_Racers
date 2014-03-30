@@ -108,21 +108,10 @@ function Map:__init(roadRadius, width, height)
 
     -- generate edges
     self.edges = {}
-    -- for i, vertex in ipairs(self.vertices) do
-    --     for j = 1, #self.vertices do
-    --         if i < j then
-    --             local e = graph[i][j]
-    --             if e ~= nil then
-    --                 self.edges[#self.edges + 1] = {e.p1.x, e.p1.y, e.p2.x, e.p2.y}
-    --             end
-    --         end
-    --     end
-    -- end
 
     for i = 1, #self.graph do
         for j = 1, #self.graph do
             local e = self.graph[i][j]
-            -- print(e)
             if e ~= nil then
                 self.edges[ #self.edges+1 ] = {e.p1.x, e.p1.y, e.p2.x, e.p2.y}
             end
@@ -175,12 +164,18 @@ function Map:populateCanvas()
     local borderSize = self.roadRadius / 10 -- for roadRadius 20 this is 2
     love.graphics.setCanvas(self.canvas)
 
-    -- the border
+    -- handle border on outside of intersections
+    love.graphics.setColor(255, 255, 255)
+    for i, vertex in ipairs(self.vertices) do
+        love.graphics.circle("fill", vertex.x, vertex.y, self.roadRadius/2)
+    end
+
+    -- the border of roads
     love.graphics.setColor(255,255,255)
     love.graphics.setLineWidth(self.roadRadius)
     drawEdges(self.edges)
 
-    -- the inside
+    -- the inside of roads
     love.graphics.setColor(90,90,90)
     love.graphics.setLineWidth((self.roadRadius-borderSize))
     drawEdges(self.edges)
@@ -190,12 +185,10 @@ function Map:populateCanvas()
     love.graphics.setLineWidth(borderSize/2 )
     drawEdges(self.edges)
 
-    -- handle intersections
+    -- handle intersections, inside
     love.graphics.setColor(90, 90, 90)
     for i, vertex in ipairs(self.vertices) do
-        -- love.graphics.setPointSize((roadRadius-borderSize) * scale)
         love.graphics.circle("fill", vertex.x, vertex.y, ((self.roadRadius - borderSize)/2))
-        -- love.graphics.point(vertex.x, vertex.y)
     end
 
     love.graphics.setCanvas()

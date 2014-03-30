@@ -94,22 +94,6 @@ function Wheel:updateDrive(driveControl)
         return
     end
 
-    -- local currentSpeed = forwardNormal_x * forwardVelocity_x + forwardNormal_y * forwardVelocity_y
-
-    -- print("newspeed", newSpeed)
-    -- print("currentSpeed", currentSpeed)
-
-    -- apply force
-    -- local force = 0
-    -- if newSpeed > currentSpeed then
-    --     force = maxForce
-    -- elseif newSpeed < currentSpeed then
-    --     force = -maxForce
-    -- else
-    --     return
-    -- end
-
-
 end
 
 function Wheel:updateFriction()
@@ -189,6 +173,15 @@ function Car:__init(x, y, img, density)
         love.physics.newWeldJoint(self.body, self.wheels[4].body, self.wheels[4].body:getX(), self.wheels[4].body:getY())
     }
 
+    -- enable limits
+    self.joint[1]:setLimitsEnabled(true)
+    self.joint[2]:setLimitsEnabled(true)
+
+    -- stop front wheels from turning too much
+    local lockAngle = math.pi/4
+    self.joint[1]:setLimits(-lockAngle, lockAngle)
+    self.joint[2]:setLimits(-lockAngle, lockAngle)
+
     -- local x,y,mass,inertia = self.body:getMassData()
     -- local newMass = 1500
     -- inertia = inertia*(newMass/mass)
@@ -196,11 +189,11 @@ function Car:__init(x, y, img, density)
     -- print("mass:", self.body:getMass())
 end
 
-function Car:update(steering, throttle)
+function Car:update(steering, throttle, dt)
     for i, wheel in ipairs(self.wheels) do
         wheel:updateFriction()
-        wheel:updateTurn(steering)
         wheel:updateDrive(throttle)
+        wheel:updateTurn(steering)
     end
 end
 
@@ -217,37 +210,6 @@ function Car:draw(debug)
         love.graphics.polygon("line", self.body:getWorldPoints(self.shape:getPoints()))
     end
 
-    -- love.graphics.push()
-    -- local window_x, window_y = love.graphics.getDimensions()
-    -- love.graphics.translate(window_x/2, window_y/2)
-    -- love.graphics.rotate(self.body:getAngle())
-    -- local center_x, center_y = self.body:getLocalCenter()
-    -- love.graphics.translate(-center_x, -center_y)
-
-    -- love.graphics.draw(self.image, 0, 0)
-    -- if debug then
-    --     for i = 1, 4 do
-    --         love.graphics.push()
-    --         if i == 1 then
-    --             love.graphics.translate(0, self.image:getHeight()*.75)
-    --         elseif i == 2 then
-    --             love.graphics.translate(self.image:getWidth(), self.image:getHeight() * .75)
-    --         elseif i == 3 then
-    --             love.graphics.translate(0,0)
-    --         elseif i == 4 then
-    --             love.graphics.translate(self.image:getWidth(), 0)
-    --         end
-
-    --         if i == 1 or i == 2 then
-    --             love.graphics.rotate(self.wheels[i].body:getAngle())
-    --         end
-
-    --         love.graphics.polygon("line", self.wheels[i].shape:getPoints())
-    --         love.graphics.pop()
-    --     end
-    --     love.graphics.polygon("line", self.shape:getPoints())
-    -- end
-    -- love.graphics.pop()
 end
 
 function Car:getX()

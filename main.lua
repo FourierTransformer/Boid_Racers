@@ -19,19 +19,6 @@ function love.load()
    world = love.physics.newWorld(0, 0, true) -- ZERO-G
    tank = Car:new(000, 000, "95px-Tank-GTA2-2.png")
 
-    
-
-
-    -- run aStar
-    -- start = math.floor((math.random() * #vertices / 4))
-    -- goal = math.floor((math.random() * #vertices))
-    -- -- start = 1
-    -- -- goal = 750
-    -- path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
-    -- print("A*: ", os.clock() - tick)
-    -- tick = os.clock()
-
-
     -- generate the map
     map = Map:new(roadRadius, width, height)
     -- print("Road/minimap Texture Generation: ", os.clock() - tick)
@@ -43,7 +30,7 @@ end
 
 function love.update(dt)
     world:update(dt)
-    tank:update(steering, throttle)
+    tank:update(steering, throttle, dt)
 end
 
 -- draw ALL THE THINGS
@@ -84,6 +71,7 @@ function love.draw()
     -- love.graphics.circle("fill", radius + offset, height - radius - offset, radius)
 
     -- and the actual map
+    -- love.graphics.scale(.5, .5)
     map:draw()
     -- love.graphics.setColor(255, 255, 255)
     -- love.graphics.setStencil(minimapStencil)
