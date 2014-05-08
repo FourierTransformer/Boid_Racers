@@ -83,7 +83,8 @@ function Wheel:updateDrive(driveControl)
     if (driveControl == 1) then
         
         local force = 15000/(forwardSpeed-3625)+50
-        
+        force = force * 2
+
         self.body:applyForce(force * forwardNormal_x, force * forwardNormal_y, self.body:getWorldCenter())
 
     elseif (driveControl == -1) then
