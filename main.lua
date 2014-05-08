@@ -14,18 +14,34 @@ function love.load()
     width, height = 10000, 10000
     local roadRadius = 200
 
-    -- setup the car
-    throttle, steering = 0, 0
-    love.physics.setMeter(27)
-    world = love.physics.newWorld(0, 0, true) -- ZERO-G
-    tank = Car:new(0, 0, "95px-Tank-GTA2-2.png")
+
 
     -- generate the map
     map = Map:new(roadRadius, width, height)
     -- print("Road/minimap Texture Generation: ", os.clock() - tick)
+    -- Generate best path using A*
+    vertices = map.vertices
+    graph = map.graph
+    start = math.floor((math.random() * #vertices / 4))
+    goal = math.floor((math.random() * #vertices))
+    -- start = 1
+    -- goal = 750
+    path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
 
+    -- setup the car
+    throttle, steering = 0, 0
+    love.physics.setMeter(27)
+    world = love.physics.newWorld(0, 0, true) -- ZERO-G
+    tank = Car:new(vertices[start].x, vertices[start].y, "95px-Tank-GTA2-2.png")
+    -- set up AI cars
+    throttle, steering = 0, 0
+    love.physics.setMeter(27)
+    world = love.physics.newWorld(0, 0, true) -- ZERO-G
+    car1 = Car:new(vertices[start].x+10, vertices[start].y+10, "95px-Tank-GTA2-2.png")
     -- add car to map
     map:addCar(tank)
+    -- add AI cars to map
+    map:addCar(car1)
 end
 
 function love.update(dt)
