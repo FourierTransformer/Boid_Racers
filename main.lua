@@ -9,7 +9,7 @@ function love.load()
 
     -- CONSTANTS BITCHES
     love.window.setTitle("Boid Racers")
-    numberVerts = 50
+    numberVerts = 100
     width, height = 10000, 10000
     local roadRadius = 200
 
@@ -71,7 +71,7 @@ function love.draw()
     -- love.graphics.circle("fill", radius + offset, height - radius - offset, radius)
 
     -- and the actual map
-    -- love.graphics.scale(.5, .5)
+    love.graphics.scale(.5, .5)
     map:draw()
     -- love.graphics.setColor(255, 255, 255)
     -- love.graphics.setStencil(minimapStencil)
