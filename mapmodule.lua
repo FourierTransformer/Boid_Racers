@@ -140,10 +140,11 @@ function Map:draw()
     love.graphics.translate(-x, -y)
     love.graphics.draw(self.canvas, 0, 0)
     
-    self.cars[1]:draw(true)
-    -- for _, car in ipairs(self.cars) do
-    --     car:draw(true)
-    -- end
+    --self.cars[1]:draw(true)
+    for _, car in ipairs(self.cars) do
+        car:draw(true)
+    end
+
     love.graphics.pop()
     love.graphics.pop()
 end
