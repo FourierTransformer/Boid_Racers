@@ -30,7 +30,10 @@ end
 
 function love.update(dt)
     world:update(dt)
+    -- Player controlled tank
     tank:update(steering, throttle, dt)
+    -- AI controlled tanks
+    
 end
 
 -- draw ALL THE THINGS
