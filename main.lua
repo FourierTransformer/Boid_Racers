@@ -5,6 +5,7 @@ local MapModule   = require 'mapmodule'
 local Map      = MapModule.Map
 
 local tank
+
 function love.load()
 
     -- CONSTANTS BITCHES
@@ -14,10 +15,10 @@ function love.load()
     local roadRadius = 200
 
     -- setup the car
-   throttle, steering = 0, 0
-   love.physics.setMeter(27)
-   world = love.physics.newWorld(0, 0, true) -- ZERO-G
-   tank = Car:new(000, 000, "95px-Tank-GTA2-2.png")
+    throttle, steering = 0, 0
+    love.physics.setMeter(27)
+    world = love.physics.newWorld(0, 0, true) -- ZERO-G
+    tank = Car:new(0, 0, "95px-Tank-GTA2-2.png")
 
     -- generate the map
     map = Map:new(roadRadius, width, height)
@@ -25,7 +26,6 @@ function love.load()
 
     -- add car to map
     map:addCar(tank)
-
 end
 
 function love.update(dt)
