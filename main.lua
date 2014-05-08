@@ -3,8 +3,11 @@ local CarTD    = require 'CarTD'
 local Car      = CarTD.Car
 local MapModule   = require 'mapmodule'
 local Map      = MapModule.Map
+local aStar    = require 'aStar'
 
 local tank
+local car1
+local car1_AI
 
 function love.load()
 
@@ -32,16 +35,14 @@ function love.load()
     throttle, steering = 0, 0
     love.physics.setMeter(27)
     world = love.physics.newWorld(0, 0, true) -- ZERO-G
-    tank = Car:new(vertices[start].x, vertices[start].y, "95px-Tank-GTA2-2.png")
+    tank = Car:new(vertices[start].x, vertices[start].y, "CARS/AMartin-Vanquesh.png")
     -- set up AI cars
-    throttle, steering = 0, 0
-    love.physics.setMeter(27)
-    world = love.physics.newWorld(0, 0, true) -- ZERO-G
-    car1 = Car:new(vertices[start].x+10, vertices[start].y+10, "95px-Tank-GTA2-2.png")
+    car1 = Car:new(vertices[start].x+50, vertices[start].y+50, "95px-Tank-GTA2-2.png")
     -- add car to map
     map:addCar(tank)
     -- add AI cars to map
     map:addCar(car1)
+
 end
 
 function love.update(dt)

@@ -9,7 +9,7 @@
 local Delaunay = require 'Delaunay'
 local Point    = Delaunay.Point
 local Voronoi  = require 'Voronoi'
-local aStar    = require 'aStar'
+
 
 -- ================
 -- Private helpers
