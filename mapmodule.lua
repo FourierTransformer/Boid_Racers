@@ -139,7 +139,7 @@ function Map:draw()
     love.graphics.setCanvas()
 
     love.graphics.push()
-    love.graphics.translate(window_w, window_h)
+    love.graphics.translate(window_w*3.25, window_h*3.25)
 
     love.graphics.push()
     love.graphics.translate(-x, -y)
@@ -211,16 +211,17 @@ function Map:populateCanvas()
     -- it got cray. I killed it because slowdown was tremendous. Might revisit later.
 end
 
+
 function Map:setPath(path)
     self.path = path
 
     love.graphics.setCanvas(self.canvas)
     love.graphics.setColor(0,0, 255)
     for i, v in ipairs(self.path) do
-        love.graphics.circle("fill", v.x, v.y, 20)
+        love.graphics.circle("fill", v.x, v.y, 100)
     end
     love.graphics.setColor(255, 255, 255)
-
+    love.graphics.setCanvas()
 end
 
 MapModule = {
