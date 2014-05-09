@@ -97,7 +97,7 @@ end
 
 local Map = class()
 
-function Map:__init(roadRadius, width, height)
+function Map:__init(roadRadius, width, height, start, finish)
     self.roadRadius = roadRadius
     self.width = width
     self.height = height
@@ -117,6 +117,11 @@ function Map:__init(roadRadius, width, height)
             end
         end
     end
+
+    -- start/end
+    self.start = start
+    self.finish = finish
+
     -- populate the canvas
     self:populateCanvas()
 
@@ -147,6 +152,7 @@ function Map:draw()
 
     love.graphics.pop()
     love.graphics.pop()
+
 end
 
 function Map:addCar(car)
@@ -192,10 +198,29 @@ function Map:populateCanvas()
         love.graphics.circle("fill", vertex.x, vertex.y, ((self.roadRadius - borderSize)/2))
     end
 
+    -- draw the start/goal
+    love.graphics.setColor(0, 255, 0)
+    love.graphics.circle("fill", self.vertices[self.start].x, self.vertices[self.start].y, ((self.roadRadius - borderSize)/2))
+
+    love.graphics.setColor(255, 0, 0)
+    love.graphics.circle("fill", self.vertices[self.finish].x, self.vertices[self.finish].y, ((self.roadRadius - borderSize)/2))
+
     love.graphics.setCanvas()
 
     -- add noise? This is gonna get cray
     -- it got cray. I killed it because slowdown was tremendous. Might revisit later.
+end
+
+function Map:setPath(path)
+    self.path = path
+
+    love.graphics.setCanvas(self.canvas)
+    love.graphics.setColor(0,0, 255)
+    for i, v in ipairs(self.path) do
+        love.graphics.circle("fill", v.x, v.y, 20)
+    end
+    love.graphics.setColor(255, 255, 255)
+
 end
 
 MapModule = {

@@ -24,17 +24,22 @@ function love.load()
     love.physics.setMeter(15)
     world = love.physics.newWorld(0, 0, true) -- ZERO-G
 
-    -- generate the map
-    map = Map:new(roadRadius, width, height)
     -- print("Road/minimap Texture Generation: ", os.clock() - tick)
     -- Generate best path using A*
+    -- generate the map
+    local start = math.floor((math.random() * numberVerts / 4))
+    local goal = math.floor((math.random() * numberVerts))
+    map = Map:new(roadRadius, width, height, start, goal)
+
+
     local vertices = map.vertices
     local graph = map.graph
-    local start = math.floor((math.random() * #vertices / 4))
-    local goal = math.floor((math.random() * #vertices))
     -- start = 1
     -- goal = 750
     local path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
+
+    Map:setPath(path)
+
 
     -- setup the world
     throttle, steering = 0, 0
