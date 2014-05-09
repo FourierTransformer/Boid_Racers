@@ -29,13 +29,13 @@ function love.load()
     map = Map:new(roadRadius, width, height)
     -- print("Road/minimap Texture Generation: ", os.clock() - tick)
     -- Generate best path using A*
-    vertices = map.vertices
-    graph = map.graph
-    start = math.floor((math.random() * #vertices / 4))
-    goal = math.floor((math.random() * #vertices))
+    local vertices = map.vertices
+    local graph = map.graph
+    local start = math.floor((math.random() * #vertices / 4))
+    local goal = math.floor((math.random() * #vertices))
     -- start = 1
     -- goal = 750
-    path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
+    local path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
 
     -- setup the world
     throttle, steering = 0, 0
@@ -49,7 +49,7 @@ function love.load()
     map:addCar(tank)
     -- add AI cars to map
     map:addCar(car1)
-    car1_AI = carAI:new(vertices[start].x+50, vertices[start].y+50, car1,path)
+    car1_AI = carAI:new(car1,path)
 
 end
 

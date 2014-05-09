@@ -24,9 +24,8 @@ end
 
 local carAI = class();
 
-function carAI:__init(startPosx, startPosy, car,path)
-	self.startPosx = startPosx
-	self.startPosy = startPosy
+function carAI:__init( car,path)
+	self.index = 1
     self.car = car
     self.path = path
 end
@@ -34,7 +33,22 @@ end
 function carAI:update(dt)
 	local throttle = 1
 	local steering = 1
+	local vertexDirX
+	local vertexDirY
+	local vertexOrien
+	local carOrien
    self.car:update(steering,throttle, dt) 
+   -- Need to get cars current point and orintation to the next vertex
+   vertexDirX = self.car:getX() - self.path[self.index].x
+   vertexDirY = self.car:getY() - self.path[self.index].y
+   -- take dot product of vector to next vertex and vector in the 0 degree direction
+   -- to match the orientation of the car
+   vertexOrien = dotProduct(vertexDirX, vertexDirY, 0, -1)
+   vertexOrien = vertexOrien / magnitude(vertexDirX,vertexDirY)
+   vertexOrien = math.acos(vertexOrien)
+   carOrien = self.car:getAngle()
+   print(carOrien)
+   -- Determine which direction to turn
 end
 
 local car_ai = {
