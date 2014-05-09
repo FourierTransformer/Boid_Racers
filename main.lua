@@ -34,8 +34,7 @@ function love.load()
 
     local vertices = map.vertices
     local graph = map.graph
-    -- start = 1
-    -- goal = 750
+
     local path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
 
     Map:setPath(path)
@@ -61,7 +60,7 @@ function love.update(dt)
     world:update(dt)
     -- Player controlled tank
     tank:update(steering, throttle, dt)
-    love.window.setTitle("forwardSpeed: " .. tank:getForwardSpeed() / 15 * 2.234 .. " mph?", 20, 20)
+    love.window.setTitle("forwardSpeed: " .. tank:getForwardSpeed() / 15 .. " mph?", 20, 20)
 
     -- AI controlled tanks
     car1_AI:update(dt)

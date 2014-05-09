@@ -33,22 +33,43 @@ end
 function carAI:update(dt)
 	local throttle = 1
 	local steering = 1
-	local vertexDirX
-	local vertexDirY
+  local carX = self.car:getX() 
+  local carY = self.car:getY() 
+  local vertexX = self.path[self.index].x
+  local vertexY = self.path[self.index].y
+	local vectorDirX
+	local vectorDirY
 	local vertexOrien
 	local carOrien
-   self.car:update(steering,throttle, dt) 
    -- Need to get cars current point and orintation to the next vertex
-   vertexDirX = self.car:getX() - self.path[self.index].x
-   vertexDirY = self.car:getY() - self.path[self.index].y
-   -- take dot product of vector to next vertex and vector in the 0 degree direction
-   -- to match the orientation of the car
-   vertexOrien = dotProduct(vertexDirX, vertexDirY, 0, -1)
-   vertexOrien = vertexOrien / magnitude(vertexDirX,vertexDirY)
-   vertexOrien = math.acos(vertexOrien)
-   carOrien = self.car:getAngle()
-   print(carOrien)
-   -- Determine which direction to turn
+  vectorDirX = carX - vertexX
+  vectorDirY = carY - vertexY
+  -- take dot product of vector to next vertex and vector in the 0 degree direction
+  -- to match the orientation of the car
+  vertexOrien = dotProduct(vectorDirX, vectorDirY, 0, -1)
+  vertexOrien = vertexOrien / magnitude(vectorDirX,vectorDirY)
+  vertexOrien = math.acos(vertexOrien)
+  carOrien = self.car:getAngle() % 2*math.pi
+  -- Determine which direction to turn
+  if math.abs(carOrien - vertexOrien) < .25 then
+      steering = 0
+  elseif math.abs(carOrien - vertexOrien) >= math.pi/2 then
+      steering = 1
+  else
+      steering = -1
+  end
+  -- If we get close enough to the current vertex then we should move to the next vertex
+  if distance(carX, carY, vertexX, vertexY) < 50 then
+      self.index = self.index + 1
+  end
+  -- Slow down if too fast
+  if self.car:getForwardSpeed() > 800 then
+    throttle = 0
+  end
+  print("abs difference orientation: " .. math.abs(carOrien - vertexOrien))
+  print("Distance from vertex: " .. distance(carX, carY, vertexX, vertexY))
+  print("Steering: " .. steering)
+  self.car:update(steering,throttle, dt) 
 end
 
 local car_ai = {
