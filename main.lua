@@ -31,13 +31,13 @@ function love.load()
     local goal = math.floor((math.random() * numberVerts))
     map = Map:new(roadRadius, width, height, start, goal)
 
-
+    print(start .. " and goal " .. goal)
     local vertices = map.vertices
     local graph = map.graph
 
     local path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
 
-    Map:setPath(path)
+    map:setPath(path)
     -- set up player car
     tank = Car:new(vertices[start].x, vertices[start].y, "CARS/AMartin-Vanquesh.png")
     -- set up AI cars
@@ -98,7 +98,7 @@ function love.draw()
     -- love.graphics.circle("fill", radius + offset, height - radius - offset, radius)
 
     -- and the actual map
-    love.graphics.scale(.5, .5)
+    love.graphics.scale(.075, .075)
     map:draw()
     -- love.graphics.setColor(255, 255, 255)
     -- love.graphics.setStencil(minimapStencil)
