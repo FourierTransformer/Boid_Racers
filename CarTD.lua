@@ -31,6 +31,10 @@ function dotProduct(x1, y1, x2, y2)
     return x1 * x2 + y1 * y2
 end
 
+function magnitude(x1,y2)
+    return math.sqrt(x1^2 + y2^2)
+end
+
 --- `Wheel` class
 -- @type Wheel
 local Wheel = class()
@@ -225,6 +229,10 @@ end
 
 function Car:getY()
     return self.body:getY()
+end
+
+function Car:getAngle()
+    return self.body:getAngle()
 end
 
 CarTD = {
