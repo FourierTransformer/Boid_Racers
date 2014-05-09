@@ -35,6 +35,10 @@ function magnitude(x1,y2)
     return math.sqrt(x1^2 + y2^2)
 end
 
+function distance(x1,y1,x2,y2)
+    return math.sqrt((x1-x2)^2 +(y1-y2)^2)
+end
+
 --- `Wheel` class
 -- @type Wheel
 local Wheel = class()
