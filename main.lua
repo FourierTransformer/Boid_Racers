@@ -33,8 +33,8 @@ function love.load()
     local graph = map.graph
     local start = math.floor((math.random() * #vertices / 4))
     local goal = math.floor((math.random() * #vertices))
-    -- start = 1
-    -- goal = 750
+    start = 1
+    goal = 150
     local path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
 
     -- setup the world
