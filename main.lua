@@ -17,9 +17,13 @@ function love.load()
     love.window.setTitle("Boid Racers")
     numberVerts = 100
     width, height = 10000, 10000
-    local roadRadius = 200
+    local roadRadius = 400
 
-
+    -- setup the car
+    throttle, steering = 0, 0
+    love.physics.setMeter(15)
+    world = love.physics.newWorld(0, 0, true) -- ZERO-G
+    tank = Car:new(0, 0, "95px-Tank-GTA2-2.png")
 
     -- generate the map
     map = Map:new(roadRadius, width, height)
