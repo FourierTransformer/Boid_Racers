@@ -64,13 +64,19 @@ function carAI:getOriens()
   -- Need to get cars current point and orintation to the next vertex
   vectorDirX = carX - vertexX
   vectorDirY = carY - vertexY
+  print("vectorDirX: " .. vectorDirX .. " vectorDirY: " .. vectorDirY)
   -- take dot product of vector to next vertex and vector in the 0 degree direction
   -- to match the orientation of the car
   vertexOrien = dotProduct(vectorDirX, vectorDirY, 0, -1)
+  print("Dot product: " .. vertexOrien)
   vertexOrien = vertexOrien / magnitude(vectorDirX,vectorDirY)
   vertexOrien = math.acos(vertexOrien)
 
   return vertexOrien,carOrien
+end
+-- This is important, do this. 
+function steerToVector(x,y)
+
 end
 
 function carAI:update(dt)
@@ -81,7 +87,7 @@ function carAI:update(dt)
     diff = carOrien - vertexOrien
     print("Index of Path: " .. self.index)
     -- Determine which direction to turn
-    if -.25 < diff and diff < .25 then
+    if -.5 < diff and diff < .5 then
         noSteering()
     elseif -math.pi > diff and diff > math.pi then
         flipSteering()
@@ -101,6 +107,7 @@ function carAI:update(dt)
     print("difference orientation: " .. diff)
     print("Distance from vertex: " .. distance(carX, carY, vertexX, vertexY))
     print("Steering: " .. steering)
+    print("")
     self.car:update(steering,throttle, dt) 
   else 
         throttle = 0
