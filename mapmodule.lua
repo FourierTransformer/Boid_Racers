@@ -126,15 +126,15 @@ function Map:__init(roadRadius, width, height)
 end
 
 function Map:draw()
-    local window_x, window_y = love.graphics.getDimensions()
-    -- local x = -self.cars[1]:getX() -- + window_x/2
-    -- local y = - -- + window_y/2
+    local window_w, window_h = love.graphics.getDimensions()
+    -- local x = -self.cars[1]:getX() -- + window_w/2
+    -- local y = - -- + window_h/2
     local x, y = self.cars[1].body:getWorldCenter()
 
     love.graphics.setCanvas()
 
     love.graphics.push()
-    love.graphics.translate(window_x/2, window_y/2)
+    love.graphics.translate(window_w, window_h)
 
     love.graphics.push()
     love.graphics.translate(-x, -y)
