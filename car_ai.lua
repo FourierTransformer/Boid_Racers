@@ -31,7 +31,7 @@ local carX
 local carY 
 
 function carAI:__init( car,path)
-	self.index = 1
+	self.index = #path - 1
     self.car = car
     self.path = path
 end
@@ -74,14 +74,14 @@ function carAI:getOriens()
 end
 
 function carAI:update(dt)
-  if self.index < #self.path then
+  if self.index > 1 then
   	local throttle = 1
     local carOrien,vertexOrien
     carOrien,vertexOrien = self:getOriens()
     diff = carOrien - vertexOrien
-
+    print("Index of Path: " .. self.index)
     -- Determine which direction to turn
-    if -.1 < diff and diff < .1 then
+    if -.25 < diff and diff < .25 then
         noSteering()
     elseif -math.pi > diff and diff > math.pi then
         flipSteering()
@@ -89,17 +89,18 @@ function carAI:update(dt)
         restoreSteering()
     end
     -- If we get close enough to the current vertex then we should move to the next vertex
+    print(vertexX,vertexY)
     if distance(carX, carY, vertexX, vertexY) < 1000 then
-        self.index = self.index + 1
+        self.index = self.index - 1
     end
     -- Slow down if too fast
     if self.car:getForwardSpeed() > 250 then
       throttle = 0
     end
-    -- print ("carOrien: " .. carOrien .. " vertexOrien: " .. vertexOrien)
-    -- print("difference orientation: " .. diff)
-    -- print("Distance from vertex: " .. distance(carX, carY, vertexX, vertexY))
-    -- print("Steering: " .. steering)
+    print ("carOrien: " .. carOrien .. " vertexOrien: " .. vertexOrien)
+    print("difference orientation: " .. diff)
+    print("Distance from vertex: " .. distance(carX, carY, vertexX, vertexY))
+    print("Steering: " .. steering)
     self.car:update(steering,throttle, dt) 
   else 
         throttle = 0

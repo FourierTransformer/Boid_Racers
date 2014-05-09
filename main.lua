@@ -15,7 +15,7 @@ function love.load()
 
     -- CONSTANTS BITCHES
     love.window.setTitle("Boid Racers")
-    numberVerts = 100
+    numberVerts = 500
     width, height = 10000, 10000
     local roadRadius = 400
 
