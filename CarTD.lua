@@ -3,7 +3,7 @@
 -- ## Delaunay, Love2D module for top-down cars
 -- @author Shakil Thakur and Nate Balas
 -- @copyright 2014
--- @license MIT?
+-- @license MIT
 -- @script CartD
 
 -- ================
@@ -106,7 +106,7 @@ function Wheel:updateDrive(driveControl)
 
 end
 
-function Wheel:updateFriction()
+function Wheel:updateFriction(throttle)
     -- WOAH
     local maxLateralImpulse = 200
 
@@ -136,18 +136,17 @@ function Wheel:updateFriction()
         forwardSpeed = .01
     end
 
-    love.window.setTitle("forwardSpeed" .. forwardSpeed/27*2.234 .. "mph", 20, 20)
+    -- love.window.setTitle("forwardSpeed: " .. forwardSpeed / 15 * 2.234 / 3600 .. " mph?", 20, 20)
+    -- love.window.setTitle("forwardSpeed: " .. forwardSpeed*2.234/3600 .. " mph", 20, 20)
     -- print("forwardSpeed", forwardSpeed/27*2.234, "mph")
     -- print("forwardSpeed", forwardSpeed, "px/s")
 
     forward_x = forward_x / forwardSpeed
     forward_y = forward_y / forwardSpeed
-    local dragForce = -.00005*forwardSpeed^3
+    local dragForce = .00005 * forwardSpeed^3
     -- print("dragForce", dragForce)x2
 
-
     -- self.body:applyForce( dragForce * forward_x, dragForce * forward_y, self.body:getWorldCenter())
-
 end
 
 --- `Car` class
@@ -192,16 +191,22 @@ function Car:__init(x, y, img, density)
     self.joint[1]:setLimits(-lockAngle, lockAngle)
     self.joint[2]:setLimits(-lockAngle, lockAngle)
 
-    -- local x,y,mass,inertia = self.body:getMassData()
-    -- local newMass = 1500
-    -- inertia = inertia*(newMass/mass)
-    -- self.body:setMassData(x, y, newMass, inertia)
+    local correctMass = 0.6
+    local x,y,oldMass,inertia = self.body:getMassData()
+    inertia = inertia * (correctMass / oldMass)
+    self.body:setMassData(x, y, correctMass, inertia)
     -- print("mass:", self.body:getMass())
+    -- love.window.setTitle("mass     " .. self.body:getMass(), 20, 20)
+end
+
+function Car:getForwardSpeed()
+    local x,y = self.body:getLinearVelocity()
+    return math.sqrt(x^2 + y^2)
 end
 
 function Car:update(steering, throttle, dt)
     for i, wheel in ipairs(self.wheels) do
-        wheel:updateFriction()
+        wheel:updateFriction(throttle)
         wheel:updateDrive(throttle)
         wheel:updateTurn(steering)
     end
