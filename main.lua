@@ -38,12 +38,6 @@ function love.load()
     local path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
 
     Map:setPath(path)
-
-
-    -- setup the world
-    throttle, steering = 0, 0
-    love.physics.setMeter(27)
-    world = love.physics.newWorld(0, 0, true) -- ZERO-G
     -- set up player car
     tank = Car:new(vertices[start].x, vertices[start].y, "CARS/AMartin-Vanquesh.png")
     -- set up AI cars
