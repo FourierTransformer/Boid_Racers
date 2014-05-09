@@ -56,7 +56,7 @@ function love.update(dt)
     world:update(dt)
     -- Player controlled tank
     tank:update(steering, throttle, dt)
-    love.window.setTitle("forwardSpeed: " .. tank:getForwardSpeed() / 15 * 2.234 .. " mph?", 20, 20)
+    love.window.setTitle("forwardSpeed: " .. tank:getForwardSpeed() / 15 .. " mph?", 20, 20)
 
     -- AI controlled tanks
     car1_AI:update(dt)
