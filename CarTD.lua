@@ -61,7 +61,7 @@ end
 
 -- 1 for left, -1 for right, 0 for nothing
 function Wheel:updateTurn(turnControl)
-    local torque = 15 * turnControl
+    local torque = 20 * turnControl
     self.body:applyTorque(torque)
 end
 
@@ -82,6 +82,7 @@ function Wheel:updateDrive(driveControl)
     -- determine new speed
     if (driveControl == 1) then
         
+        -- MOAR MAGIC
         local force = 15000/(forwardSpeed-3625)+50
         force = force * 2
 
@@ -99,7 +100,7 @@ end
 
 function Wheel:updateFriction()
     -- WOAH
-    local maxLateralImpulse = 3
+    local maxLateralImpulse = 200
 
     -- get sideways velocity/impulse
     local lat_x, lat_y = self:getLateralVelocity()
@@ -118,7 +119,7 @@ function Wheel:updateFriction()
     self.body:applyLinearImpulse(imp_x, imp_y, center_x, center_y)
 
     -- stop the angular velocity
-    self.body:applyAngularImpulse(-.1 * self.body:getInertia() * self.body:getAngularVelocity())
+    self.body:applyAngularImpulse(-.07 * self.body:getInertia() * self.body:getAngularVelocity())
 
     -- add some drag (so a car can stop on its own)
     local forward_x, forward_y = self:getForwardVelocity()
@@ -134,7 +135,7 @@ function Wheel:updateFriction()
     forward_x = forward_x / forwardSpeed
     forward_y = forward_y / forwardSpeed
     local dragForce = -.00005*forwardSpeed^3
-    -- print("dragForce", dragForce)
+    -- print("dragForce", dragForce)x2
 
 
     -- self.body:applyForce( dragForce * forward_x, dragForce * forward_y, self.body:getWorldCenter())
