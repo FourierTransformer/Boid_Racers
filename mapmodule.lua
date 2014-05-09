@@ -216,9 +216,11 @@ function Map:setPath(path)
     self.path = path
 
     love.graphics.setCanvas(self.canvas)
-    love.graphics.setColor(0,0, 255)
+    local index = 1
     for i, v in ipairs(self.path) do
+        love.graphics.setColor(0,0, index/#self.path*255)
         love.graphics.circle("fill", v.x, v.y, 100)
+        index = index + 1
     end
     love.graphics.setColor(255, 255, 255)
     love.graphics.setCanvas()
