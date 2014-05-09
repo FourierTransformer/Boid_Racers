@@ -23,7 +23,6 @@ function love.load()
     throttle, steering = 0, 0
     love.physics.setMeter(15)
     world = love.physics.newWorld(0, 0, true) -- ZERO-G
-    tank = Car:new(0, 0, "95px-Tank-GTA2-2.png")
 
     -- generate the map
     map = Map:new(roadRadius, width, height)
@@ -57,6 +56,8 @@ function love.update(dt)
     world:update(dt)
     -- Player controlled tank
     tank:update(steering, throttle, dt)
+    love.window.setTitle("forwardSpeed: " .. tank:getForwardSpeed() / 15 * 2.234 .. " mph?", 20, 20)
+
     -- AI controlled tanks
     car1_AI:update(dt)
 end
