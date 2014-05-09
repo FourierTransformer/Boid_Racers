@@ -4,6 +4,8 @@ local Car      = CarTD.Car
 local MapModule   = require 'mapmodule'
 local Map      = MapModule.Map
 local aStar    = require 'aStar'
+local car_ai = require 'car_ai'
+local carAI = car_ai.carAI
 
 local tank
 local car1
@@ -35,10 +37,11 @@ function love.load()
     -- goal = 750
     path = aStar.aStar(vertices, graph, vertices[start], vertices[goal])
 
-    -- setup the car
+    -- setup the world
     throttle, steering = 0, 0
     love.physics.setMeter(27)
     world = love.physics.newWorld(0, 0, true) -- ZERO-G
+    -- set up player car
     tank = Car:new(vertices[start].x, vertices[start].y, "CARS/AMartin-Vanquesh.png")
     -- set up AI cars
     car1 = Car:new(vertices[start].x+50, vertices[start].y+50, "95px-Tank-GTA2-2.png")
@@ -46,6 +49,7 @@ function love.load()
     map:addCar(tank)
     -- add AI cars to map
     map:addCar(car1)
+    car1_AI = carAI:new(vertices[start].x+50, vertices[start].y+50, car1,path)
 
 end
 
@@ -54,7 +58,7 @@ function love.update(dt)
     -- Player controlled tank
     tank:update(steering, throttle, dt)
     -- AI controlled tanks
-    
+    car1_AI:update(dt)
 end
 
 -- draw ALL THE THINGS
