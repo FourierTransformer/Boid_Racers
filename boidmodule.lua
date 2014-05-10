@@ -103,13 +103,19 @@ function Vector:projection(b)
     return b:scalarMult(dot), dot
 end
 
---- `Car` class
--- @type Car
-local Car = class()
-Car.__eq = function(a, b) return (a.p1 == b.p1 and a.p2 == b.p2) end
-Car.__tostring = function(r) return "" end
+--- `Boid` class
+-- @type Boid
+local Boid = class()
+Boid.__eq = function(a, b) return (a.p1 == b.p1 and a.p2 == b.p2) end
+Boid.__tostring = function(r) return "" end
 
-function Car:__init(x, y, img, density)
+function Boid:__init(x, y, angle, maxSpeed, maxForce)
+    self.maxSpeed = maxSpeed or 2
+    self.maxForce = maxForce or .03
+    self.position = Vector:new(x, y)
+    self.velocity = Vector:new(0, 0)
+    self.acceleration = Vector:new(0, 0)
+    self.angle = angle or 0
 end
 
 BoidModule = {
