@@ -105,12 +105,15 @@ function Vector:scalarSub(scalar)
 end
 
 function Vector:upperLimit(limit)
-    if self.x > limit then
-        self.x = limit
+    local x = self.x
+    local y = self.y
+    if x > limit then
+        x = limit
     end
-    if self.y > limit then 
-        self.y = limits
+    if y > limit then 
+        y = limit
     end
+    return Vector:new(x,y)
 end
 
 function Vector:projection(b)
@@ -130,28 +133,52 @@ Boid.__tostring = function(r) return "" end
 function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
     self.id = id
 
-    -- PVA
+    -- Position Velocity Acceleration
     self.position = Vector:new(x, y)
-    self.velocity = Vector:new(0, 0)
-    self.acceleration = Vector:new(0, 0)
+    self.velocity = Vector:new(100, 100)
+    self.acceleration = Vector:new(0,0)
     self.path = path
     self.angle = angle or 0
 
-    self.maxSpeed = maxSpeed or 2
-    self.maxForce = maxForce or .03
+    self.maxSpeed = maxSpeed or 100
+    self.maxForce = maxForce or 100
+end
+
+function Boid:addForce(force)
+    self.acceleration = self.acceleration + force
 end
 
 function Boid:update(dt)
+    local seek = self:seek(Vector:new(love.mouse.getX(),love.mouse.getY()))
+    print(seek)
+    self:addForce(seek)
     self.velocity = self.velocity + self.acceleration:scalarMult(dt)
     self.position = self.position + self.velocity:scalarMult(dt)
+    self.acceleration = Vector:new(0,0)
 end
 
 function Boid:draw()
-    love.graphics.circle( "fill", self.poistion.x, self.position.y, 20)
+    love.graphics.setColor(255,255,0)
+    love.graphics.circle( "fill", self.position.x, self.position.y, 20)
+    love.graphics.setColor(255,255,255)
 end
+
+function Boid:seek(target)
+    local toTarget = self.position-target
+    toTarget = toTarget:normalize()
+    toTarget:scalarMult(self.maxSpeed)
+    local steerForce = toTarget - self.velocity
+    steerForce = steerForce:upperLimit(self.maxForce)
+    return steerForce
+end
+
+
+
 
 --- `Motorcade` class
 -- @type Motorcade
+local Motorcade = class()
+
 Motorcade.__eq = function(a, b) return false end
 Motorcade.__tostring = function(r) return "" end
 
@@ -159,7 +186,7 @@ function Motorcade:__init()
     self.boids = {}
 end
 
-local function separation(boid)
+function Motorcade:separation(boid)
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
         if b ~= v then
@@ -172,12 +199,14 @@ local function separation(boid)
 end
 
 function Motorcade:update(dt)
-    for i, v in ipairs(self.boids) do
+    for i, b in ipairs(self.boids) do
         -- rules go here
-        b.velocity = b.velocity + separation(v) * dt
-        v:update(dt)
+        -- b.velocity = b.velocity + self:separation(b):scalarMult(dt)
+
+        b:update(dt)
     end
 end
+
 
 function Motorcade:draw()
    for i, v in ipairs(self.boids) do
@@ -191,17 +220,11 @@ function Motorcade:add(x, y, path, angle, maxSpeed, maxForce)
 end
 
 
-function seek(target)
-    local toTarget = Vector:new(self.position-target)
-    toTarget:normalize()
-    toTarget:scalarMult(self.maxSpeed)
-    local steerForce = toTarget - self.velocity
-    steerForce:upperLimit(self.maxForce)
-    return steerForce
-end
+
 
 BoidModule = {
     Boid = Boid,
+    Motorcade = Motorcade,
     _VERSION = "SUPER-BETA"
 }
 return BoidModule
