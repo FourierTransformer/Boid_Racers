@@ -106,20 +106,74 @@ end
 --- `Boid` class
 -- @type Boid
 local Boid = class()
-Boid.__eq = function(a, b) return (a.p1 == b.p1 and a.p2 == b.p2) end
+Boid.__eq = function(a, b) return (a.id == b.id) end
 Boid.__tostring = function(r) return "" end
 
-function Boid:__init(x, y, angle, maxSpeed, maxForce)
-    self.maxSpeed = maxSpeed or 2
-    self.maxForce = maxForce or .03
+function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
+    self.id = id
+
+    -- PVA
     self.position = Vector:new(x, y)
     self.velocity = Vector:new(0, 0)
     self.acceleration = Vector:new(0, 0)
+    self.path = path
     self.angle = angle or 0
+
+    self.maxSpeed = maxSpeed or 2
+    self.maxForce = maxForce or .03
+end
+
+function Boid:update(dt)
+    self.velocity = self.velocity + self.acceleration:scalarMult(dt)
+    self.position = self.position + self.velocity:scalarMult(dt)
+end
+
+function Boid:draw()
+    love.graphics.circle( "fill", self.poistion.x, self.position.y, 20)
+end
+
+--- `Motorcade` class
+-- @type Motorcade
+Motorcade.__eq = function(a, b) return false end
+Motorcade.__tostring = function(r) return "" end
+
+function Motorcade:__init()
+    self.boids = {}
+end
+
+local function separation(boid)
+    local c = Vector:new(0, 0)
+    for i, v in ipairs(self.boids) do
+        if b ~= v then
+            if (boid.position-v.position):length() < 100 then
+                c = c - (v.position - boid.position)
+            end
+        end
+    end
+    return c
+end
+
+function Motorcade:update(dt)
+    for i, v in ipairs(self.boids) do
+        -- rules go here
+        b.velocity = b.velocity + separation(v) * dt
+        v:update(dt)
+    end
+end
+
+function Motorcade:draw()
+   for i, v in ipairs(self.boids) do
+        v:draw()
+    end 
+end
+
+function Motorcade:add(x, y, path, angle, maxSpeed, maxForce)
+    local id = #self.boids+1
+    self.boids[ id ] = Boid:new(id, x, y, path, angle, maxSpeed, maxForce)
 end
 
 BoidModule = {
-    Boid = Boid, 
+    Boid = Boid,
     _VERSION = "SUPER-BETA"
 }
 return BoidModule
