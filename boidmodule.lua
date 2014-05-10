@@ -91,8 +91,26 @@ function Vector:dot(a)
     return self.x * a.x + self.y * a.y
 end
 
+function Vector:normalize()
+    local mag = self:length();
+    return Vector:new(self.x/mag, self.y/mag)
+end
+
 function Vector:scalarMult(scalar)
     return Vector:new(self.x*scalar,self.y*scalar)
+end
+
+function Vector:scalarSub(scalar)
+    return Vector:new(self.x-scalar,self.y-scalar)
+end
+
+function Vector:upperLimit(limit)
+    if self.x > limit then
+        self.x = limit
+    end
+    if self.y > limit then 
+        self.y = limits
+    end
 end
 
 function Vector:projection(b)
@@ -170,6 +188,16 @@ end
 function Motorcade:add(x, y, path, angle, maxSpeed, maxForce)
     local id = #self.boids+1
     self.boids[ id ] = Boid:new(id, x, y, path, angle, maxSpeed, maxForce)
+end
+
+
+function seek(target)
+    local toTarget = Vector:new(self.position-target)
+    toTarget:normalize()
+    toTarget:scalarMult(self.maxSpeed)
+    local steerForce = toTarget - self.velocity
+    steerForce:upperLimit(self.maxForce)
+    return steerForce
 end
 
 BoidModule = {
