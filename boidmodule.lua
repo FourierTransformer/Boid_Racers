@@ -109,7 +109,7 @@ function Vector:upperLimit(limit)
         self.x = limit
     end
     if self.y > limit then 
-        self.y = limit
+        self.y = limits
     end
 end
 
