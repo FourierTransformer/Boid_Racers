@@ -106,7 +106,7 @@ function love.draw()
     -- love.graphics.circle("fill", radius + offset, height - radius - offset, radius)
 
     -- and the actual map
-    -- love.graphics.scale(.075, .075)
+    love.graphics.scale(.075, .075)
     map:draw()
     motorcade:draw()
     -- love.graphics.setColor(255, 255, 255)
