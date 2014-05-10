@@ -134,21 +134,21 @@ function Map:draw()
     local window_w, window_h = love.graphics.getDimensions()
     -- local x = -self.cars[1]:getX() -- + window_w/2
     -- local y = - -- + window_h/2
-    local x, y = self.cars[1].body:getWorldCenter()
+    -- local x, y = self.cars[1].body:getWorldCenter()
 
     love.graphics.setCanvas()
 
     love.graphics.push()
-    love.graphics.translate(window_w*3.25, window_h*3.25)
+    love.graphics.translate(window_w, window_h)
 
     love.graphics.push()
-    love.graphics.translate(-x, -y)
+    --love.graphics.translate(-x, -y)
     love.graphics.draw(self.canvas, 0, 0)
     
     --self.cars[1]:draw(true)
-    for _, car in ipairs(self.cars) do
-        car:draw(true)
-    end
+    -- for _, car in ipairs(self.cars) do
+    --     car:draw(true)
+    -- end
 
     love.graphics.pop()
     love.graphics.pop()
