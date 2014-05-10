@@ -42,7 +42,9 @@ function love.load()
     map:setPath(path)
 
     motorcade = Motorcade:new()
-    motorcade:add(500,500,path)
+    for i = 1,10 do
+      motorcade:add(i*5,i*5,path)
+    end
     -- -- set up player car
     -- tank = Car:new(vertices[start].x, vertices[start].y, "CARS/AMartin-Vanquesh.png")
     -- -- set up AI cars
