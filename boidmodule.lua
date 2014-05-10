@@ -91,8 +91,26 @@ function Vector:dot(a)
     return self.x * a.x + self.y * a.y
 end
 
+function Vector:normalize()
+    local mag = self:length();
+    return Vector:new(self.x/mag, self.y/mag)
+end
+
 function Vector:scalarMult(scalar)
     return Vector:new(self.x*scalar,self.y*scalar)
+end
+
+function Vector:scalarSub(scalar)
+    return Vector:new(self.x-scalar,self.y-scalar)
+end
+
+function Vector:upperLimit(limit)
+    if self.x > limit then
+        self.x = limit
+    end
+    if self.y > limit then 
+        self.y = limit
+    end
 end
 
 function Vector:projection(b)
@@ -116,6 +134,16 @@ function Boid:__init(x, y, angle, maxSpeed, maxForce)
     self.velocity = Vector:new(0, 0)
     self.acceleration = Vector:new(0, 0)
     self.angle = angle or 0
+end
+
+
+function seek(target)
+    local toTarget = Vector:new(self.position-target)
+    toTarget:normalize()
+    toTarget:scalarMult(self.maxSpeed)
+    local steerForce = toTarget - self.velocity
+    steerForce:upperLimit(self.maxForce)
+    return steerForce
 end
 
 BoidModule = {
