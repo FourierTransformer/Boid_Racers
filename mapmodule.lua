@@ -233,6 +233,7 @@ end
 
 function Map:clearPathCanvas()
     self.pathvas:clear()
+    self.pathColors = {}
 end
 
 MapModule = {
