@@ -131,17 +131,17 @@ function Map:__init(roadRadius, width, height, start, finish)
 end
 
 function Map:draw()
-    local window_w, window_h = love.graphics.getDimensions()
+    -- local window_w, window_h = love.graphics.getDimensions()
     -- local x = -self.cars[1]:getX() -- + window_w/2
     -- local y = - -- + window_h/2
     -- local x, y = self.cars[1].body:getWorldCenter()
 
-    love.graphics.setCanvas()
+    -- love.graphics.setCanvas()
 
-    love.graphics.push()
-    love.graphics.translate(window_w/6, window_h/6000)
+    -- love.graphics.push()
+    -- love.graphics.translate(window_w/6000, window_h/6000)
 
-    love.graphics.push()
+    -- love.graphics.push()
     --love.graphics.translate(-x, -y)
     love.graphics.draw(self.canvas, 0, 0)
     
@@ -150,8 +150,8 @@ function Map:draw()
     --     car:draw(true)
     -- end
 
-    love.graphics.pop()
-    love.graphics.pop()
+    -- love.graphics.pop()
+    -- love.graphics.pop()
 
 end
 
@@ -218,8 +218,9 @@ function Map:setPath(path)
     love.graphics.setCanvas(self.canvas)
     local index = 1
     for i, v in ipairs(self.path) do
-        love.graphics.setColor(0,0, index/#self.path*255)
-        love.graphics.circle("fill", v.x, v.y, 100)
+        love.graphics.setColor(200, 200, 0)
+        love.graphics.setPointSize(self.roadRadius/4)
+        love.graphics.point(v.x, v.y)
         index = index + 1
     end
     love.graphics.setColor(255, 255, 255)

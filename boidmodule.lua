@@ -134,26 +134,31 @@ function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
     self.id = id
 
     -- Position Velocity Acceleration
+    self.startX = x
+    self.startY = y
     self.position = Vector:new(x, y)
     self.velocity = Vector:new(0,0)
     self.acceleration = Vector:new(0,0)
     self.path = path
-    self.index = #path 
+    self.index = 1
     self.angle = angle or 0
 
-    self.maxSpeed = maxSpeed or 1000
-    self.maxForce = maxForce or 5000
+    self.maxSpeed = maxSpeed or 15
+    self.maxForce = maxForce or 10
 end
 
 function Boid:getVertex()
-    local index = self.index
     local vX = self.path[self.index].x
     local vY = self.path[self.index].y
-    if distance(self.position.x,self.position.y,vX,vY) < 500 then
-        self.index = self.index - 1
-        if self.index < 1 then 
-            self.index = #self.path
+    if distance(self.position.x,self.position.y,vX,vY) < 20 then
+        self.index = self.index + 1
+
+        -- reset when they get to the end of the path
+        if self.index > #self.path then
+            self.index = 1
+            self.position = Vector:new(self.startX, self.startY)
         end
+
         vX = self.path[self.index].x
         vY = self.path[self.index].y
     end
@@ -165,8 +170,9 @@ function Boid:addForce(force)
 end
 
 function Boid:update(dt)
+    local dt = dt * 5
     local vertex = self:getVertex()
-    local seek = self:seek(Vector:new(vertex.x,vertex.y))
+    local seek = self:seek(vertex)
     self:addForce(seek)
     self.velocity = self.velocity + self.acceleration:scalarMult(dt)
     self.velocity = self.velocity:upperLimit(self.maxSpeed)
@@ -176,7 +182,7 @@ end
 
 function Boid:draw()
     love.graphics.setColor(255,255,0)
-    love.graphics.circle( "fill", self.position.x, self.position.y, 50)
+    love.graphics.circle( "fill", self.position.x, self.position.y, 2 * love.window.getPixelScale())
     love.graphics.setColor(255,255,255)
 end
 
@@ -207,7 +213,7 @@ function Motorcade:separation(boid)
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
         if b ~= v then
-            if (boid.position-v.position):length() < 150 then
+            if (boid.position-v.position):length() < 15 then
                 c = c - (v.position - boid.position)
             end
         end
