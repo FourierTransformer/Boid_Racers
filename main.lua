@@ -15,6 +15,7 @@ local map
 local motorcade
 local roadRadius
 local borderSize
+local pause = false
 
 function love.load()
     -- SETTING IT UP!
@@ -80,7 +81,17 @@ function love.load()
 end
 
 function love.update(dt)
+  if pause then
+    motorcade:update(0)
+  else
     motorcade:update(dt)
+  end
+end
+
+function love.keypressed(key)
+  if key == " " then 
+    pause = not pause
+  end
 end
 
 -- draw ALL THE THINGS
@@ -107,7 +118,6 @@ end
 function love.mousepressed(x, y, button)
   if button == "l" then
     local mouseVec = Vector:new(x,y)
-    
     if distance(start, mouseVec) < 100 then
       love.mouse.setCursor(startCursor)
     end
