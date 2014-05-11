@@ -20,6 +20,8 @@ function love.load()
     -- SETTING IT UP!
     love.window.setTitle("Boid Racers")
     love.window.setMode(1280, 720, {highdpi = true})
+    require('loveframes')
+    require('gui')
 
     -- CONSTANTS BITCHES
     math.randomseed( os.time() )
@@ -81,6 +83,7 @@ end
 
 function love.update(dt)
     motorcade:update(dt)
+    loveframes.update(dt)
 end
 
 -- draw ALL THE THINGS
@@ -88,6 +91,7 @@ function love.draw()
     -- and the actual map and motorcade!
     map:draw()
 
+    -- THESE two should really go back into mapmodule at some point
     -- draw the start point
     love.graphics.setColor(0, 255, 0)
     love.graphics.circle("fill", start.x, start.y, ((roadRadius - borderSize)/2))
@@ -101,10 +105,20 @@ function love.draw()
     motorcade:draw()
 
     -- texty stuff
+    local ps = love.window.getPixelScale()
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10, 0, love.window.getPixelScale(), love.window.getPixelScale())
+    love.graphics.print("BOID RACERS", 1100*ps, 40*ps, 0, ps, ps)
+    love.graphics.print("Nate Balas & Shakil Thakur", 1050*ps, 60*ps, 0, ps, ps)
+
+    -- GUI
+    loveframes.draw()
 end
 
 function love.mousepressed(x, y, button)
+
+  -- LOVEFRAMES
+  loveframes.mousepressed(x, y, button)
+
   if button == "l" then
     local mouseVec = Vector:new(x,y)
     
@@ -117,6 +131,7 @@ function love.mousepressed(x, y, button)
     end
 
   end
+
 end
 
 local function findNearestVertex(vert)
@@ -165,6 +180,8 @@ local function updateGoal()
 end
 
 function love.mousereleased(x, y, button)
+    loveframes.mousereleased(x, y, button)
+
     if button == "l" then
         -- create vector with mouse coords
         local mouseLoc = Vector:new(x, y)
