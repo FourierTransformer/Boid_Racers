@@ -1,30 +1,30 @@
 #!/usr/bin/env lua
 ---------------
--- ## A*, a Lua module for a somewhat specific purpose
+-- ## PathFinding, a Lua module for pathfinding
 -- @author Shakil Thakur
 -- @copyright 2014
 -- @license MIT
--- @script aStar
+-- @script pathfinding
 
 local Peaque = require 'Peaque'
 local Heap   = Peaque.Heap
 
+local PathFinding = {
+    _VERSION = "SUPER-BETA"
+}
 
 local function constructPath(cameFrom, currentNode)
     local final  = {}
     while cameFrom[currentNode] ~= nil do
-        table.insert(final, currentNode)
+        table.insert(final, 1, currentNode)
         currentNode = cameFrom[currentNode]
     end
     -- for i,v in ipairs(final) do print(i, v) end
+
     return final
 end
 
-local aStar = {
-    _VERSION = "SUPER-BETA"
-}
-
-function aStar.aStar(verts, adjMatrix, start, goal)
+function PathFinding.aStar(verts, adjMatrix, start, goal)
     local closedList = {}
     local openList = Heap()
     local cameFrom = {}
@@ -69,4 +69,4 @@ function aStar.aStar(verts, adjMatrix, start, goal)
 
 end
 
-return aStar
+return PathFinding
