@@ -35,8 +35,8 @@ function magnitude(x1,y2)
     return math.sqrt(x1^2 + y2^2)
 end
 
-function distance(x1,y1,x2,y2)
-    return math.sqrt((x1-x2)^2 +(y1-y2)^2)
+function distance(v1, v2)
+    return math.sqrt((v1.x-v2.x)^2 +(v1.y-v2.y)^2)
 end
 
 -- ================
@@ -144,13 +144,11 @@ function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
     self.angle = angle or 0
 
     self.maxSpeed = maxSpeed or 15
-    self.maxForce = maxForce or 10
+    self.maxForce = maxForce or 5
 end
 
-function Boid:getVertex()
-    local vX = self.path[self.index].x
-    local vY = self.path[self.index].y
-    if distance(self.position.x,self.position.y,vX,vY) < 20 then
+function Boid:getVertex(roadRadius)
+    if distance(self.position, self.path[self.index]) < roadRadius/1.7 then
         self.index = self.index + 1
 
         -- reset when they get to the end of the path
@@ -159,30 +157,40 @@ function Boid:getVertex()
             self.position = Vector:new(self.startX, self.startY)
         end
 
-        vX = self.path[self.index].x
-        vY = self.path[self.index].y
     end
-    return Vector:new(vX,vY)
+    return self.path[self.index]
 end
 
 function Boid:addForce(force)
     self.acceleration = self.acceleration + force
 end
 
-function Boid:update(dt)
+function Boid:update(dt, roadRadius)
     local dt = dt * 5
-    local vertex = self:getVertex()
+    local vertex = self:getVertex(roadRadius)
     local seek = self:seek(vertex)
     self:addForce(seek)
     self.velocity = self.velocity + self.acceleration:scalarMult(dt)
     self.velocity = self.velocity:upperLimit(self.maxSpeed)
     self.position = self.position + self.velocity:scalarMult(dt)
+
+    if self.index >= 2 then
+        local a = self.path[self.index - 1]
+        local b = self.path[self.index]
+        local n = (Vector:new(b.x, b.y) - Vector:new(a.x, a.y)):normalize()
+        local aLessPos = a - self.position
+        local distance = (aLessPos - n:scalarMult(aLessPos:dot(n))):length()
+        if distance > roadRadius-roadRadius/5 then
+            self.velocity = self.velocity:scalarMult(.1)
+        end
+    end
+
     self.acceleration = Vector:new(0,0)
 end
 
-function Boid:draw()
+function Boid:draw(roadRadius)
     love.graphics.setColor(255,255,0)
-    love.graphics.circle( "fill", self.position.x, self.position.y, 2 * love.window.getPixelScale())
+    love.graphics.circle( "fill", self.position.x, self.position.y, roadRadius/10)
     love.graphics.setColor(255,255,255)
 end
 
@@ -205,8 +213,9 @@ local Motorcade = class()
 Motorcade.__eq = function(a, b) return false end
 Motorcade.__tostring = function(r) return "" end
 
-function Motorcade:__init()
+function Motorcade:__init(roadRadius)
     self.boids = {}
+    self.roadRadius = roadRadius
 end
 
 function Motorcade:separation(boid)
@@ -226,14 +235,14 @@ function Motorcade:update(dt)
         -- rules go here
         b.velocity = b.velocity + self:separation(b):scalarMult(dt)
 
-        b:update(dt)
+        b:update(dt, self.roadRadius)
     end
 end
 
 
 function Motorcade:draw()
    for i, v in ipairs(self.boids) do
-        v:draw()
+        v:draw(self.roadRadius)
     end 
 end
 

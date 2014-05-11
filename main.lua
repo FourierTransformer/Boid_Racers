@@ -31,8 +31,8 @@ function love.load()
     map:setPath(path)
 
     -- Create the motorcade and add 60 cars!
-    motorcade = Motorcade:new()
-    for i = 1, 60 do
+    motorcade = Motorcade:new(roadRadius)
+    for i = 1, 100 do
       motorcade:add(vertices[start].x+i*5,vertices[start].y+i*5,path)
     end
 end
