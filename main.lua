@@ -35,8 +35,18 @@ function love.load()
 
     -- Create the motorcade and add 60 cars!
     motorcade = Motorcade:new(roadRadius)
-    for i = 1, 100 do
-      motorcade:add(vertices[start].x,vertices[start].y,path)
+    for i = 1, 60 do
+      motorcade:add(vertices[start].x, vertices[start].y, path, "yellow")
+    end
+
+    local path2 = PathFinding.GBFS(vertices, graph, vertices[start], vertices[goal])
+    for i = 1, 60 do
+      motorcade:add(vertices[start].x, vertices[start].y, path2, "magenta")
+    end
+
+    local path3 = PathFinding.uniformCost(vertices, graph, vertices[start], vertices[goal])
+    for i = 1, 60 do
+      motorcade:add(vertices[start].x, vertices[start].y, path3, "cyan")
     end
 end
 

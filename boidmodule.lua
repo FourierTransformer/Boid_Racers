@@ -39,6 +39,12 @@ function distance(v1, v2)
     return math.sqrt((v1.x-v2.x)^2 +(v1.y-v2.y)^2)
 end
 
+local colors = {
+    ["yellow"] = function() love.graphics.setColor(255, 255, 0) end,
+    ["magenta"] = function() love.graphics.setColor(255, 0, 255) end,
+    ["cyan"] = function() love.graphics.setColor(0, 255, 255) end
+}
+
 -- ================
 -- Module classes
 -- ================
@@ -130,7 +136,7 @@ local Boid = class()
 Boid.__eq = function(a, b) return (a.id == b.id) end
 Boid.__tostring = function(r) return "" end
 
-function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
+function Boid:__init(id, x, y, path, color, angle, maxSpeed, maxForce)
     self.id = id
 
     -- Position Velocity Acceleration
@@ -141,6 +147,7 @@ function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
     self.acceleration = Vector:new(0,0)
     self.path = path
     self.index = 1
+    self.color = color
     self.angle = angle or 0
 
     self.maxSpeed = maxSpeed or 15
@@ -189,7 +196,7 @@ function Boid:update(dt, roadRadius)
 end
 
 function Boid:draw(roadRadius)
-    love.graphics.setColor(255,255,0)
+    colors[self.color]()
     love.graphics.circle( "fill", self.position.x, self.position.y, roadRadius/10)
     love.graphics.setColor(255,255,255)
 end
@@ -246,9 +253,9 @@ function Motorcade:draw()
     end 
 end
 
-function Motorcade:add(x, y, path, angle, maxSpeed, maxForce)
+function Motorcade:add(x, y, path, color, angle, maxSpeed, maxForce)
     local id = #self.boids+1
-    self.boids[ id ] = Boid:new(id, x, y, path, angle, maxSpeed, maxForce)
+    self.boids[ id ] = Boid:new(id, x, y, path, color, angle, maxSpeed, maxForce)
 end
 
 
