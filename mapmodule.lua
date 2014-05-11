@@ -126,7 +126,7 @@ end
 
 local Map = class()
 
-function Map:__init(roadRadius, width, height, start, finish)
+function Map:__init(roadRadius, width, height)
     self.roadRadius = roadRadius
     self.width = width
     self.height = height
@@ -147,55 +147,16 @@ function Map:__init(roadRadius, width, height, start, finish)
         end
     end
 
-    -- start/end
-    self.start = start
-    self.finish = finish
-
     -- Keeps track of colors at path
     self.pathColors = {}
 
     -- populate the canvas
     self:populateCanvas()
 
-    -- car handler
-    self.cars = {}
-
 end
 
 function Map:draw()
-    -- local window_w, window_h = love.graphics.getDimensions()
-    -- local x = -self.cars[1]:getX() -- + window_w/2
-    -- local y = - -- + window_h/2
-    -- local x, y = self.cars[1].body:getWorldCenter()
-
-    -- love.graphics.setCanvas()
-
-    -- love.graphics.push()
-    -- love.graphics.translate(window_w/6000, window_h/6000)
-
-    -- love.graphics.push()
-    --love.graphics.translate(-x, -y)
     love.graphics.draw(self.canvas, 0, 0)
-    
-    --self.cars[1]:draw(true)
-    -- for _, car in ipairs(self.cars) do
-    --     car:draw(true)
-    -- end
-
-    -- love.graphics.pop()
-    -- love.graphics.pop()
-
-end
-
-function Map:addCar(car)
-    self.cars[ #self.cars+1 ] = car
-end
-
-local MiniMap = class()
-function MiniMap__init(width, height)
-    self.width = width
-    self.height = height
-    self.canvas = love.graphics.newCanvas(width, height)
 end
 
 function Map:populateCanvas()
@@ -229,13 +190,6 @@ function Map:populateCanvas()
     for i, vertex in ipairs(self.vertices) do
         love.graphics.circle("fill", vertex.x, vertex.y, ((self.roadRadius - borderSize)/2))
     end
-
-    -- draw the start/goal
-    love.graphics.setColor(0, 255, 0)
-    love.graphics.circle("fill", self.vertices[self.start].x, self.vertices[self.start].y, ((self.roadRadius - borderSize)/2))
-
-    love.graphics.setColor(255, 0, 0)
-    love.graphics.circle("fill", self.vertices[self.finish].x, self.vertices[self.finish].y, ((self.roadRadius - borderSize)/2))
 
     love.graphics.setCanvas()
 
@@ -277,7 +231,6 @@ end
 
 MapModule = {
     Map = Map,
-    Minimap = Map, 
     _VERSION = "SUPER-BETA"
 }
 return MapModule
