@@ -137,17 +137,23 @@ local function findNearestVertex(vert)
 end
 
 local function updateStart()
+    -- clear the Path canvas
+    map:clearPathCanvas()
+
     -- Do some aStar!
     local path = PathFinding.aStar(vertices, graph, start, goal)
-    motorcade:setPath("yellow", path)    
+    motorcade:setPath("yellow", path)
+    map:setPath(path, "yellow")
 
     -- GBFS
     local path2 = PathFinding.GBFS(vertices, graph, start, goal)
     motorcade:setPath("magenta", path2)
+    map:setPath(path2,"magenta")
 
     -- and uniform cost!
     local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
     motorcade:setPath("cyan", path3)
+    map:setPath(path3,"cyan")
 
     -- and start popping up in the right location
     motorcade:setStart(start)
