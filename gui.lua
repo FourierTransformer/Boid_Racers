@@ -71,7 +71,7 @@ slider3:SetPos(1000*ps, 210*ps)
 slider3:SetWidth(270*ps)
 slider3:SetMinMax(1, 100)
 slider3:SetValue(60)
-slider3:SetText("GBFS Boids")
+slider3:SetText("Uniform Cost Boids")
 slider3:SetDecimals(0)
 
 local s3text1 = loveframes.Create("text", panel)
@@ -88,10 +88,32 @@ end
 
 --------------------------------------
 
+local slider4 = loveframes.Create("slider", frame)
+slider4:SetPos(1000*ps, 260*ps)
+slider4:SetWidth(270*ps)
+slider4:SetMinMax(0, 10)
+slider4:SetValue(5)
+slider4:SetText("Boid Speed")
+slider4:SetDecimals(0)
+
+local s4text1 = loveframes.Create("text", panel)
+s4text1:SetPos(20*ps, 250*ps)
+s4text1:SetFont(love.graphics.newFont(10*ps))
+s4text1:SetText(slider4:GetText())
+
+local s4text2 = loveframes.Create("text", panel)
+s4text2:SetFont(love.graphics.newFont(10*ps))
+s4text2.Update = function(object, dt)
+    object:SetPos((290 - object:GetWidth())*ps, 250*ps)
+    object:SetText(slider4:GetValue())
+end
+
+--------------------------------------
+
 -- then a checkbox for Boid Separation
 local checkbox1 = loveframes.Create("checkbox", panel)
 checkbox1:SetText("Boid Separation")
-checkbox1:SetPos(20*ps, 250*ps)
+checkbox1:SetPos(20*ps, 300*ps)
 checkbox1:SetFont(love.graphics.newFont(12*ps))
 checkbox1:SetChecked(true)
 
