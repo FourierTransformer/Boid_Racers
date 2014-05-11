@@ -11,14 +11,17 @@ function love.load()
     love.window.setMode(1280, 720, {highdpi = true})
 
     -- CONSTANTS BITCHES
-    numberVerts = 150
-    width, height = love.graphics.getDimensions() --10000, 10000
+    math.randomseed( os.time() )
+    vertDistro = {math.random(10, 50), math.random(10, 50), math.random(10, 50), math.random(10, 50)} --for each quadrant
+    numberVerts = 0
+    for i, v in ipairs(vertDistro) do numberVerts = numberVerts + v end
+    local width, height = love.graphics.getDimensions() --10000, 10000
     width = width - (300 * love.window.getPixelScale())
     local roadRadius = 20 * love.window.getPixelScale()
 
     -- Generate best path using A*
-    local start = math.floor((math.random() * numberVerts / 4))
-    local goal = math.floor((math.random() * numberVerts))
+    local start = math.floor((math.random() * numberVerts/4))
+    local goal = math.floor((math.random(2*numberVerts/4, numberVerts)))
 
     -- Generate the map
     map = Map:new(roadRadius, width, height, start, goal)
@@ -33,7 +36,7 @@ function love.load()
     -- Create the motorcade and add 60 cars!
     motorcade = Motorcade:new(roadRadius)
     for i = 1, 100 do
-      motorcade:add(vertices[start].x+i*5,vertices[start].y+i*5,path)
+      motorcade:add(vertices[start].x,vertices[start].y,path)
     end
 end
 
