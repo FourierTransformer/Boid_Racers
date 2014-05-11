@@ -45,21 +45,50 @@ local function halton(i, b)
     return result
 end
 
+-- stolen from http://stackoverflow.com/questions/9079853/lua-print-integer-as-a-binary
+local function bits(num)
+    -- returns a table of bits, least significant first.
+    local t={} -- will contain the bits
+    while num>0 do
+        rest=math.fmod(num,2)
+        t[#t+1]=rest
+        num=(num-rest)/2
+    end
+    return t
+end
+
+
+local function hammerslay(i, n)
+    local s = bits(i)
+    local out = 0
+    for i, v in ipairs(s) do out = out + 2^(-i) * v end
+    return i/n, out
+end
+
 local function generateGraph(width, height)
 
     -- Create points
     local points = {}
-    for i = 1, numberVerts do
-        -- random mode
-        -- points[i] = Point(math.random() * width * scale, math.random() * height * scale)
-        
-        -- apparently love's math.random is uniformly distributed?
-        -- points[i] = Point(love.math.random() * width * scale, love.math.random() * height * scale)
-
-        -- regular random isn't good enough, so I did a halton
-        points[i] = Point(halton(i, 2) * width, halton(i, 3) * height)
+    for i = 1, vertDistro[1] do
+        -- regular random isn't uniform enough, so I did a halton
+        points[#points + 1] = Point(halton(i, 2) * width/2, halton(i, 3) * height/2)
     end
 
+    for i = 1, vertDistro[2] do
+        -- apparently love's math.random is uniformly distributed?
+        points[#points + 1] = Point(love.math.random(width/2, width), love.math.random(0, height/2))
+    end
+
+    for i = 1, vertDistro[4] do
+        -- random mode
+        points[#points + 1] = Point(math.random(0, width/2), math.random(height/2, height))
+    end
+
+    for i = 1, vertDistro[3] do
+        -- Hammerslay Set for this one!
+        local j, k = hammerslay(i, vertDistro[4])
+        points[#points + 1] = Point(j * width/2 + width/2, k * height/2 + height/2)
+    end
 
     -- keep track of time.
     local tick
