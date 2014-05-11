@@ -6,6 +6,9 @@
 -- @license MIT
 -- @script Boid
 
+-- Imports
+local PathFinding = require 'pathfinding'
+
 -- ================
 -- Private helpers
 -- ================
@@ -130,13 +133,16 @@ function Vector:projection(b)
     return b:scalarMult(dot), dot
 end
 
+-- handles changes to paths
+local colorToPath = {}
+
 --- `Boid` class
 -- @type Boid
 local Boid = class()
 Boid.__eq = function(a, b) return (a.id == b.id) end
 Boid.__tostring = function(r) return "" end
 
-function Boid:__init(id, x, y, path, color, angle, maxSpeed, maxForce)
+function Boid:__init(id, x, y, path, color)
     self.id = id
 
     -- Position Velocity Acceleration
@@ -148,10 +154,14 @@ function Boid:__init(id, x, y, path, color, angle, maxSpeed, maxForce)
     self.path = path
     self.index = 1
     self.color = color
-    self.angle = angle or 0
 
-    self.maxSpeed = maxSpeed or 15
-    self.maxForce = maxForce or 5
+    self.maxSpeed = 15
+    self.maxForce = 5
+end
+
+function Boid:setStart(x, y)
+    self.startX = x
+    self.startY = y
 end
 
 function Boid:getVertex(roadRadius)
@@ -161,6 +171,7 @@ function Boid:getVertex(roadRadius)
         -- reset when they get to the end of the path
         if self.index > #self.path then
             self.index = 1
+            self.path = colorToPath[self.color]
             self.position = Vector:new(self.startX, self.startY)
         end
 
@@ -225,6 +236,31 @@ function Motorcade:__init(roadRadius)
     self.roadRadius = roadRadius
 end
 
+function Motorcade:setStart(v)
+    for i, b in ipairs(self.boids) do
+        b:setStart(v.x, v.y)
+    end
+end
+
+function Motorcade:setPath(color, path)
+    colorToPath[color] = path
+end
+
+function Motorcade:updatePath(vertices, graph, goal)
+    for i, b in ipairs(self.boids) do
+        if b.color == "yellow" then
+            b.path = PathFinding.aStar(vertices, graph, b.path[b.index], goal)
+            b.index = 1
+        elseif b.color == "magenta" then
+            b.path = PathFinding.GBFS(vertices, graph, b.path[b.index], goal)
+            b.index = 1
+        elseif b.color == "cyan" then
+            b.path = PathFinding.uniformCost(vertices, graph, b.path[b.index], goal)
+            b.index = 1
+        end
+    end
+end
+
 function Motorcade:separation(boid)
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
@@ -253,9 +289,12 @@ function Motorcade:draw()
     end 
 end
 
-function Motorcade:add(x, y, path, color, angle, maxSpeed, maxForce)
-    local id = #self.boids+1
-    self.boids[ id ] = Boid:new(id, x, y, path, color, angle, maxSpeed, maxForce)
+function Motorcade:add(x, y, path, number, color)
+    colorToPath[color] = path
+    for i = 1, number do
+        local id = #self.boids+1
+        self.boids[ id ] = Boid:new(id, x, y, path, color)
+    end
 end
 
 
@@ -264,6 +303,7 @@ end
 BoidModule = {
     Boid = Boid,
     Motorcade = Motorcade,
+    Vector = Vector,
     _VERSION = "SUPER-BETA"
 }
 return BoidModule
