@@ -138,7 +138,7 @@ function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
     self.velocity = Vector:new(0,0)
     self.acceleration = Vector:new(0,0)
     self.path = path
-    self.index = #path -1
+    self.index = #path 
     self.angle = angle or 0
 
     self.maxSpeed = maxSpeed or 1000
@@ -152,7 +152,7 @@ function Boid:getVertex()
     if distance(self.position.x,self.position.y,vX,vY) < 500 then
         self.index = self.index - 1
         if self.index < 1 then 
-            self.index = #self.path - 1
+            self.index = #self.path
         end
         vX = self.path[self.index].x
         vY = self.path[self.index].y
