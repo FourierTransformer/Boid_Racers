@@ -10,6 +10,7 @@ local Vector      = BoidModule.Vector
 local start
 local goal
 local vertices
+local graph
 local map
 local motorcade
 local roadRadius
@@ -52,7 +53,7 @@ function love.load()
     -- Generate the map
     map = Map:new(roadRadius, width, height)
     vertices = map.vertices
-    local graph = map.graph
+    graph = map.graph
     -- print("Road/minimap Texture Generation: ", os.clock() - tick)
 
     -- figure out the start/end nodes
@@ -152,6 +153,11 @@ local function updateStart()
     motorcade:setStart(start)
 end
 
+local function updateGoal()
+    motorcade:updatePath(vertices, graph, goal)
+    updateStart()
+end
+
 function love.mousereleased(x, y, button)
     if button == "l" then
         -- create vector with mouse coords
@@ -160,6 +166,7 @@ function love.mousereleased(x, y, button)
             local newGoal = findNearestVertex(mouseLoc)
             if newGoal ~= nil then
                 goal = newGoal
+                updateGoal()
             end
         
         -- if startCursor is changed

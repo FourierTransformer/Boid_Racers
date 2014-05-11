@@ -6,6 +6,9 @@
 -- @license MIT
 -- @script Boid
 
+-- Imports
+local PathFinding = require 'pathfinding'
+
 -- ================
 -- Private helpers
 -- ================
@@ -241,6 +244,21 @@ end
 
 function Motorcade:setPath(color, path)
     colorToPath[color] = path
+end
+
+function Motorcade:updatePath(vertices, graph, goal)
+    for i, b in ipairs(self.boids) do
+        if b.color == "yellow" then
+            b.path = PathFinding.aStar(vertices, graph, b.path[b.index], goal)
+            b.index = 1
+        elseif b.color == "magenta" then
+            b.path = PathFinding.GBFS(vertices, graph, b.path[b.index], goal)
+            b.index = 1
+        elseif b.color == "cyan" then
+            b.path = PathFinding.uniformCost(vertices, graph, b.path[b.index], goal)
+            b.index = 1
+        end
+    end
 end
 
 function Motorcade:separation(boid)
