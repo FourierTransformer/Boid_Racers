@@ -24,12 +24,12 @@ local function constructPath(cameFrom, currentNode)
     return final
 end
 
-function PathFinding.aStar(verts, adjMatrix, start, goal)
+function PathFinding.aStar(verts, adjMatrix, start, goal, otherAlg)
     local closedList = {}
     local openList = Heap()
     local cameFrom = {}
     local linkCost = {}
-
+    local otherAlg = otherAlg or "aStar"
     for i = 1, #verts do
         linkCost[i] = math.huge
     end
@@ -51,22 +51,42 @@ function PathFinding.aStar(verts, adjMatrix, start, goal)
             if neighbor_edge ~= nil and closedList[i] == nil then
 
                 local neighbor = verts[i]
-
-                local tentLinkCost = linkCost[current.id] + neighbor_edge:length2()
+                local tentLinkCost = 0
+                if otherAlg == "GBFS" then
+                    tentLinkCost = neighbor_edge:length2()
+                elseif otherAlg == "uniformCost" then
+                    tentLinkCost = linkCost[current.id]
+                else
+                    tentLinkCost = linkCost[current.id] + neighbor_edge:length2()
+                end
 
                 if linkCost[neighbor.id] == math.huge or tentLinkCost < linkCost[neighbor.id] then
                     cameFrom[neighbor] = current
                     linkCost[neighbor.id] = tentLinkCost
-                    local totalCost = linkCost[neighbor.id] + neighbor:dist2(goal)
+                    local totalCost = 0
+                    if otherAlg == "GBFS" then
+                        totalCost = neighbor:dist2(goal)
+                    elseif otherAlg == "uniformCost" then
+                        totalCost = linkCost[neighbor.id]
+                    else
+                        totalCost = linkCost[neighbor.id] + neighbor:dist2(goal)
+                    end
                     openList:push(neighbor, totalCost)
                 end
                 
             end
         end
 
-
     end
 
+end
+
+function PathFinding.GBFS(verts, adjMatrix, start, goal)
+    return PathFinding.aStar(verts, adjMatrix, start, goal, "GBFS")
+end
+
+function PathFinding.uniformCost(verts, adjMatrix, start, goal)
+    return PathFinding.aStar(verts, adjMatrix, start, goal, "uniformCost")
 end
 
 return PathFinding
