@@ -5,10 +5,6 @@ local PathFinding = require 'pathfinding'
 local BoidModule  = require 'boidmodule'
 local Motorcade   = BoidModule.Motorcade
 
-local tank
-local car1
-local car1_AI
-
 function love.load()
     -- SETTING IT UP!
     love.window.setTitle("Boid Racers")
