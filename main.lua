@@ -65,23 +65,17 @@ function love.load()
     -- Do some aStar!
     local path = PathFinding.aStar(vertices, graph, start, goal)
     map:setPath(path, "yellow")
-    for i = 1, 60 do
-      motorcade:add(start.x, start.y, path, "yellow")
-    end
+    motorcade:add(start.x, start.y, path, 60, "yellow")
 
     -- GBFS
     local path2 = PathFinding.GBFS(vertices, graph, start, goal)
     map:setPath(path2, "magenta")
-    for i = 1, 60 do
-      motorcade:add(start.x, start.y, path2, "magenta")
-    end
+    motorcade:add(start.x, start.y, path2, 60, "magenta")
 
     -- and uniform cost!
     local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
     map:setPath(path3, "cyan")
-    for i = 1, 60 do
-      motorcade:add(start.x, start.y, path3, "cyan")
-    end
+    motorcade:add(start.x, start.y, path3, 60, "cyan")
 end
 
 function love.update(dt)
@@ -141,21 +135,43 @@ local function findNearestVertex(vert)
   end
 end
 
+local function updateStart()
+    -- Do some aStar!
+    local path = PathFinding.aStar(vertices, graph, start, goal)
+    motorcade:setPath("yellow", path)    
+
+    -- GBFS
+    local path2 = PathFinding.GBFS(vertices, graph, start, goal)
+    motorcade:setPath("magenta", path2)
+
+    -- and uniform cost!
+    local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
+    motorcade:setPath("cyan", path3)
+
+    -- and start popping up in the right location
+    motorcade:setStart(start)
+end
+
 function love.mousereleased(x, y, button)
     if button == "l" then
         -- create vector with mouse coords
         local mouseLoc = Vector:new(x, y)
         if love.mouse.getCursor() == goalCursor then
-          local newGoal = findNearestVertex(mouseLoc)
-          if newGoal ~= nil then
-            goal = newGoal
-          end
+            local newGoal = findNearestVertex(mouseLoc)
+            if newGoal ~= nil then
+                goal = newGoal
+            end
+        
+        -- if startCursor is changed
         elseif love.mouse.getCursor() == startCursor then
-          local newStart = findNearestVertex(mouseLoc)
-          if newStart ~= nil then
-            start = newStart
-          end
+            local newStart = findNearestVertex(mouseLoc)
+            if newStart ~= nil then
+                start = newStart
+                updateStart()
+            end
         end
+
+        -- set cursor back
         love.mouse.setCursor()
     end
 end
