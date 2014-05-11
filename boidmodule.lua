@@ -264,6 +264,7 @@ end
 BoidModule = {
     Boid = Boid,
     Motorcade = Motorcade,
+    Vector = Vector,
     _VERSION = "SUPER-BETA"
 }
 return BoidModule
