@@ -42,7 +42,7 @@ function love.load()
     map:setPath(path)
 
     motorcade = Motorcade:new()
-    for i = 1,10 do
+    for i = 1,100 do
       motorcade:add(i*5,i*5,path)
     end
     -- -- set up player car
