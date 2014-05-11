@@ -131,6 +131,7 @@ function Map:__init(roadRadius, width, height)
     self.width = width
     self.height = height
     self.canvas = love.graphics.newCanvas(width, height)
+    self.pathvas = love.graphics.newCanvas(width, height)
 
     -- generate vertices and graph
     self.vertices, self.graph = generateGraph(self.width, self.height)
@@ -157,6 +158,7 @@ end
 
 function Map:draw()
     love.graphics.draw(self.canvas, 0, 0)
+    love.graphics.draw(self.pathvas, 0, 0)
 end
 
 function Map:populateCanvas()
@@ -204,7 +206,7 @@ local colors = {
 }
 
 function Map:setPath(path, color)
-    love.graphics.setCanvas(self.canvas)
+    love.graphics.setCanvas(self.pathvas)
     for i, v in ipairs(path) do
         colors[color]()
 
@@ -227,6 +229,10 @@ function Map:setPath(path, color)
     end
     love.graphics.setColor(255, 255, 255)
     love.graphics.setCanvas()
+end
+
+function Map:clearPathCanvas()
+    self.pathvas:clear()
 end
 
 MapModule = {
