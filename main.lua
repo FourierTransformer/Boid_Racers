@@ -29,22 +29,26 @@ function love.load()
     local graph = map.graph
     -- print("Road/minimap Texture Generation: ", os.clock() - tick)
 
+    -- Create the motorcade and add 60 cars to each Algo!
+    motorcade = Motorcade:new(roadRadius)
+
     -- Do some aStar!
     local path = PathFinding.aStar(vertices, graph, vertices[start], vertices[goal])
-    map:setPath(path)
-
-    -- Create the motorcade and add 60 cars!
-    motorcade = Motorcade:new(roadRadius)
+    map:setPath(path, "yellow")
     for i = 1, 60 do
       motorcade:add(vertices[start].x, vertices[start].y, path, "yellow")
     end
 
+    -- GBFS
     local path2 = PathFinding.GBFS(vertices, graph, vertices[start], vertices[goal])
+    map:setPath(path2, "magenta")
     for i = 1, 60 do
       motorcade:add(vertices[start].x, vertices[start].y, path2, "magenta")
     end
 
+    -- and uniform cost!
     local path3 = PathFinding.uniformCost(vertices, graph, vertices[start], vertices[goal])
+    map:setPath(path3, "cyan")
     for i = 1, 60 do
       motorcade:add(vertices[start].x, vertices[start].y, path3, "cyan")
     end
@@ -57,39 +61,9 @@ end
 -- draw ALL THE THINGS
 function love.draw()
     love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
-
-    -- draw the start and end of the path
-    -- love.graphics.setPointSize( 10 )
-    -- love.graphics.setColor(0, 0, 255)
-    -- love.graphics.point(vertices[start].x, vertices[start].y)
-    -- love.graphics.point(vertices[goal].x, vertices[goal].y)
-
-    -- draw the path (THIS IS FOR DEV USE ONLY.)
-    -- love.graphics.setPointSize( 5 )
-    -- love.graphics.setColor(0, 255, 0)
-    -- for i, v in ipairs(path) do
-    --     love.graphics.point(v.x, v.y)
-    -- end
-
-    -- -- draw the minimap
-    -- local radius = 100
-    -- local offset = 20
-    
-    -- -- bg and outline
-    -- love.graphics.setColor(255, 255, 255)
-    -- love.graphics.circle("fill", radius + offset, height - radius - offset, radius + 2)
-    -- love.graphics.setColor(0, 0, 0)
-    -- love.graphics.circle("fill", radius + offset, height - radius - offset, radius)
-
-    -- and the actual map
-    -- love.graphics.scale(.075, .075)
+    -- and the actual map and motorcade!
     map:draw()
     motorcade:draw()
-    -- love.graphics.setColor(255, 255, 255)
-    -- love.graphics.setStencil(minimapStencil)
-    -- love.graphics.draw(minimapCanvas, 0 - x + 100, 0 - y + (height-200))
-    -- love.graphics.setStencil()
-
 end
 
 -- anything special on quit?

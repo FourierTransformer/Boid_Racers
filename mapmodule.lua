@@ -151,6 +151,9 @@ function Map:__init(roadRadius, width, height, start, finish)
     self.start = start
     self.finish = finish
 
+    -- Keeps track of colors at path
+    self.pathColors = {}
+
     -- populate the canvas
     self:populateCanvas()
 
@@ -240,17 +243,33 @@ function Map:populateCanvas()
     -- it got cray. I killed it because slowdown was tremendous. Might revisit later.
 end
 
+local colors = {
+    ["yellow"] = function() love.graphics.setColor(225, 225, 0) end,
+    ["magenta"] = function() love.graphics.setColor(225, 0, 225) end,
+    ["cyan"] = function() love.graphics.setColor(0, 225, 225) end
+}
 
-function Map:setPath(path)
-    self.path = path
-
+function Map:setPath(path, color)
     love.graphics.setCanvas(self.canvas)
-    local index = 1
-    for i, v in ipairs(self.path) do
-        love.graphics.setColor(200, 200, 0)
-        love.graphics.setPointSize(self.roadRadius/4)
-        love.graphics.point(v.x, v.y)
-        index = index + 1
+    for i, v in ipairs(path) do
+        colors[color]()
+
+        -- if vertex isn't in the talbe, add it and the associated color
+        if self.pathColors[v] == nil then
+            self.pathColors[v] = {color}
+            love.graphics.arc("fill", v.x, v.y, self.roadRadius/4, 0, 2*math.pi)
+        else
+            -- if the vertex is in the table, add a new color and then draw them all
+            table.insert(self.pathColors[v], color)
+            for i, c in ipairs(self.pathColors[v]) do
+                colors[c]()
+                local calc = 2*math.pi/#self.pathColors[v]
+                love.graphics.arc("fill", v.x, v.y, self.roadRadius/4, calc * (i-1), calc * i)
+            end
+            -- set the color back
+            colors[color]()
+        end
+
     end
     love.graphics.setColor(255, 255, 255)
     love.graphics.setCanvas()
