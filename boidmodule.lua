@@ -138,10 +138,26 @@ function Boid:__init(id, x, y, path, angle, maxSpeed, maxForce)
     self.velocity = Vector:new(0,0)
     self.acceleration = Vector:new(0,0)
     self.path = path
+    self.index = #path 
     self.angle = angle or 0
 
-    self.maxSpeed = maxSpeed or 500
-    self.maxForce = maxForce or 1000
+    self.maxSpeed = maxSpeed or 1000
+    self.maxForce = maxForce or 5000
+end
+
+function Boid:getVertex()
+    local index = self.index
+    local vX = self.path[self.index].x
+    local vY = self.path[self.index].y
+    if distance(self.position.x,self.position.y,vX,vY) < 500 then
+        self.index = self.index - 1
+        if self.index < 1 then 
+            self.index = #self.path
+        end
+        vX = self.path[self.index].x
+        vY = self.path[self.index].y
+    end
+    return Vector:new(vX,vY)
 end
 
 function Boid:addForce(force)
@@ -149,7 +165,8 @@ function Boid:addForce(force)
 end
 
 function Boid:update(dt)
-    local seek = self:seek(Vector:new(love.mouse.getX(),love.mouse.getY()))
+    local vertex = self:getVertex()
+    local seek = self:seek(Vector:new(vertex.x,vertex.y))
     self:addForce(seek)
     self.velocity = self.velocity + self.acceleration:scalarMult(dt)
     self.velocity = self.velocity:upperLimit(self.maxSpeed)
@@ -159,7 +176,7 @@ end
 
 function Boid:draw()
     love.graphics.setColor(255,255,0)
-    love.graphics.circle( "fill", self.position.x, self.position.y, 10)
+    love.graphics.circle( "fill", self.position.x, self.position.y, 50)
     love.graphics.setColor(255,255,255)
 end
 
@@ -190,7 +207,7 @@ function Motorcade:separation(boid)
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
         if b ~= v then
-            if (boid.position-v.position):length() < 500 then
+            if (boid.position-v.position):length() < 150 then
                 c = c - (v.position - boid.position)
             end
         end

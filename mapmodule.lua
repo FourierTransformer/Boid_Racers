@@ -139,7 +139,7 @@ function Map:draw()
     love.graphics.setCanvas()
 
     love.graphics.push()
-    love.graphics.translate(window_w, window_h)
+    love.graphics.translate(window_w/6, window_h/6000)
 
     love.graphics.push()
     --love.graphics.translate(-x, -y)
