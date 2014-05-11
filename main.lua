@@ -15,7 +15,7 @@ local map
 local motorcade
 local roadRadius
 local borderSize
-local pause = not 1
+local pause = false
 
 function love.load()
     -- SETTING IT UP!
