@@ -352,7 +352,7 @@ function Motorcade:remove(number, color)
         end 
         index = index + 1
         if index >= #self.boids then
-            return
+            index = 1
         end
     end 
 end

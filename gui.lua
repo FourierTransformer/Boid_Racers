@@ -248,13 +248,18 @@ function GraphicalUserInterface:initVars()
 
     --------------------------------------
          
-    -- local button = loveframes.Create("button", frame)
-    -- button:SetWidth(200)
-    -- button:SetText("Restart")
-    -- button:Center()
-    -- button.OnClick = function(object, x, y)
-    -- object:SetText("You clicked the button!")
-    -- end
+    local button = loveframes.Create("button", panel)
+    button:SetPos(20*ps, 390*ps)
+    button:SetWidth(500)
+    button:SetHeight(50)
+    button:SetText("Restart")
+    button:Center()
+    button.OnClick = function(object, x, y)
+    object:SetEnabled(true)
+    end
+    button.OnMouseExit = function(object)
+object:SetText("The mouse exited the button.")
+end
 
 
 
