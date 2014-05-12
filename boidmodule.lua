@@ -314,8 +314,6 @@ function Motorcade:update(dt, doSeperation, boidSpeed, aStarNum, GBFSNum, unifor
 
     -- Change boid speed if needed
     self:changeMaxSpeed(boidSpeed)
-
-    -- Toggle sepereation
 end
 
 
