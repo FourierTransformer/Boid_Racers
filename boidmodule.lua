@@ -281,12 +281,19 @@ function Motorcade:separation(boid)
     return c
 end
 
-function Motorcade:update(dt, aStarNum, GBFSNum, uniformNum, startX, startY)
-    for i, b in ipairs(self.boids) do
-        -- rules go here
-        b.velocity = b.velocity + self:separation(b):scalarMult(dt)
-        b:update(dt, self.roadRadius)
-    end
+function Motorcade:update(dt, doSeperation, boidSpeed, aStarNum, GBFSNum, uniformNum, startX, startY)
+    -- Do seperation if the box is checked otherwise no.
+    if doSeperation then
+        for i, b in ipairs(self.boids) do
+            -- rules go here
+            b.velocity = b.velocity + self:separation(b):scalarMult(dt)
+            b:update(dt, self.roadRadius)
+        end
+    else 
+        for i, b in ipairs(self.boids) do
+            b:update(dt, self.roadRadius)
+        end
+    end 
     -- Change the amount of boids on screen according to the sliders
     -- Possible TODO: Make the algorithm colors dynamic in a dictonary
     if aStarNum < colorToNum["yellow"] then 
@@ -304,6 +311,11 @@ function Motorcade:update(dt, aStarNum, GBFSNum, uniformNum, startX, startY)
     elseif uniformNum > colorToNum["cyan"] then
         self:add(startX, startY, colorToPath["cyan"], uniformNum - colorToNum["cyan"], "cyan") 
     end 
+
+    -- Change boid speed if needed
+    self:changeMaxSpeed(boidSpeed)
+
+    -- Toggle sepereation
 end
 
 
@@ -312,6 +324,13 @@ function Motorcade:draw()
         v:draw(self.roadRadius)
     end 
 end
+-- TODO: This function runs everytime, could check max speed to not have it run everytime.
+function Motorcade:changeMaxSpeed(speed)
+    for i = 1, #self.boids do 
+        self.boids[i].maxSpeed = speed 
+    end 
+end 
+
 
 function Motorcade:add(x, y, path, number, color)
     colorToPath[color] = path

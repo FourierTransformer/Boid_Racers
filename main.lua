@@ -87,7 +87,7 @@ end
 
 function love.update(dt)
     GUI:update()
-    motorcade:update(dt, GUI:getAStarBoids(), GUI:getGBFSBoids(), GUI:getUniformBoids(), start.x, start.y)
+    motorcade:update(dt, GUI:getSeperation(), GUI:getBoidSpeed(), GUI:getAStarBoids(), GUI:getGBFSBoids(), GUI:getUniformBoids(), start.x, start.y)
 end
 
 -- draw ALL THE THINGS
