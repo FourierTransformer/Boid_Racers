@@ -301,7 +301,6 @@ function Motorcade:update(dt, doSeperation, boidSpeed, aStarNum, GBFSNum, unifor
         end
     end 
     -- Change the amount of boids on screen according to the sliders
-    -- Possible TODO: Make the algorithm colors dynamic in a dictonary
     local aStarColor  = algoToColor["aStar"]
     local GBFSColor   = algoToColor["GBFS"]
     local uniform     = algoToColor["uniform"]
@@ -335,7 +334,7 @@ function Motorcade:changeMaxSpeed(speed)
     end 
 end 
 
-
+-- TODO: Crashes when I change the number of boids with sliders. Should probably fix.
 function Motorcade:add(x, y, path, number, color)
     colorToPath[color] = path
     colorToNum[color] = colorToNum[color] + number
