@@ -287,10 +287,22 @@ function Motorcade:update(dt, aStarNum, GBFSNum, uniformNum, startX, startY)
         b.velocity = b.velocity + self:separation(b):scalarMult(dt)
         b:update(dt, self.roadRadius)
     end
+    -- Change the amount of boids on screen according to the sliders
+    -- Possible TODO: Make the algorithm colors dynamic in a dictonary
     if aStarNum < colorToNum["yellow"] then 
         self:remove(colorToNum["yellow"] - aStarNum, "yellow" )
     elseif aStarNum > colorToNum["yellow"] then
         self:add(startX, startY, colorToPath["yellow"], aStarNum - colorToNum["yellow"], "yellow") 
+    end 
+    if GBFSNum < colorToNum["magenta"] then 
+        self:remove(colorToNum["magenta"] - GBFSNum, "magenta" )
+    elseif GBFSNum > colorToNum["magenta"] then
+        self:add(startX, startY, colorToPath["magenta"], GBFSNum - colorToNum["magenta"], "magenta") 
+    end 
+    if uniformNum < colorToNum["cyan"] then 
+        self:remove(colorToNum["cyan"] - uniformNum, "cyan" )
+    elseif uniformNum > colorToNum["cyan"] then
+        self:add(startX, startY, colorToPath["cyan"], uniformNum - colorToNum["cyan"], "cyan") 
     end 
 end
 
@@ -306,7 +318,8 @@ function Motorcade:add(x, y, path, number, color)
     colorToNum[color] = colorToNum[color] + number
     for i = 1, number do
         local id = #self.boids+1
-        self.boids[ id ] = Boid:new(id, x, y, path, color)
+        -- self.boids[ id ] = Boid:new(id, x, y, path, color)
+        table.insert(self.boids, Boid:new(id, x, y, path, color))
     end
 end
 
@@ -318,8 +331,8 @@ function Motorcade:remove(number, color)
         local currentBoid = self.boids[index]
         if currentBoid.color == color then
             table.remove(self.boids, index)
+            removed = removed + 1
         end 
-        removed = removed + 1
         index = index + 1
         if index >= #self.boids then
             return
