@@ -245,6 +245,19 @@ function GraphicalUserInterface:initVars()
     checkbox1:SetPos(20*ps, 340*ps)
     checkbox1:SetFont(love.graphics.newFont(12*ps))
     checkbox1:SetChecked(true)
+
+    --------------------------------------
+         
+    -- local button = loveframes.Create("button", frame)
+    -- button:SetWidth(200)
+    -- button:SetText("Restart")
+    -- button:Center()
+    -- button.OnClick = function(object, x, y)
+    -- object:SetText("You clicked the button!")
+    -- end
+
+
+
 end 
 
 function GraphicalUserInterface:getAStarBoids()
