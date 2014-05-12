@@ -17,6 +17,7 @@ local map
 local motorcade
 local roadRadius
 local borderSize
+local pause = false
 
 function love.load()
     -- SETTING IT UP!
@@ -85,7 +86,16 @@ function love.load()
     GUI = GraphicalUserInterface:new(ps)
 end
 
+function love.keypressed(key)
+  if key == " " then 
+    pause = not pause
+  end
+ end
+
 function love.update(dt)
+    if pause then 
+        dt = 0
+    end
     GUI:update()
     motorcade:update(dt, GUI:getSeperation(), GUI:getBoidSpeed(), GUI:getAStarBoids(), GUI:getGBFSBoids(), GUI:getUniformBoids(), start.x, start.y)
 end
