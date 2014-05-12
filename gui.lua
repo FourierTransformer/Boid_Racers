@@ -46,6 +46,7 @@ function GraphicalUserInterface:__init(ps)
     self.GBFSBoids      = slider2
     self.uniformBoids   = slider3
     self.boidSpeed      = slider4
+    self.demoSpeed      = slider5
     self.seperation     = checkbox1
 end
 
@@ -197,8 +198,8 @@ function GraphicalUserInterface:initVars()
     slider4 = loveframes.Create("slider", frame)
     slider4:SetPos(1000*ps, 260*ps)
     slider4:SetWidth(270*ps)
-    slider4:SetMinMax(0, 10)
-    slider4:SetValue(5)
+    slider4:SetMinMax(0, 30)
+    slider4:SetValue(10)
     slider4:SetText("Boid Speed")
     slider4:SetDecimals(0)
 
@@ -214,12 +215,34 @@ function GraphicalUserInterface:initVars()
         object:SetText(slider4:GetValue())
     end
 
+    --------------------------------------    
+
+    slider5 = loveframes.Create("slider", frame)
+    slider5:SetPos(1000*ps, 310*ps)
+    slider5:SetWidth(270*ps)
+    slider5:SetMinMax(0, 100)
+    slider5:SetValue(25)
+    slider5:SetText("Demo Speed")
+    slider5:SetDecimals(0)
+
+    local s5text1 = loveframes.Create("text", panel)
+    s5text1:SetPos(20*ps, 300*ps)
+    s5text1:SetFont(love.graphics.newFont(10*ps))
+    s5text1:SetText(slider5:GetText())
+
+    local s5text2 = loveframes.Create("text", panel)
+    s5text2:SetFont(love.graphics.newFont(10*ps))
+    s5text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 300*ps)
+        object:SetText(slider5:GetValue())
+    end
+
     --------------------------------------
 
     -- then a checkbox for Boid Separation
     checkbox1 = loveframes.Create("checkbox", panel)
     checkbox1:SetText("Boid Separation")
-    checkbox1:SetPos(20*ps, 300*ps)
+    checkbox1:SetPos(20*ps, 340*ps)
     checkbox1:SetFont(love.graphics.newFont(12*ps))
     checkbox1:SetChecked(true)
 end 
@@ -244,6 +267,9 @@ function GraphicalUserInterface:getSeperation()
 	return self.seperation:GetChecked()
 end 
 
+function GraphicalUserInterface:getDemoSpeed()
+    return self.demoSpeed:GetValue()
+end 
 GUI = {
     GraphicalUserInterface = GraphicalUserInterface,
     _VERSION = "SUPER-BETA"

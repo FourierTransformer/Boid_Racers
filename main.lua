@@ -96,6 +96,7 @@ function love.update(dt)
     if pause then 
         dt = 0
     end
+    dt = dt * (GUI:getDemoSpeed()/25)
     GUI:update()
     motorcade:update(dt, GUI:getSeperation(), GUI:getBoidSpeed(), GUI:getAStarBoids(), GUI:getGBFSBoids(), GUI:getUniformBoids(), start.x, start.y)
 end
@@ -149,7 +150,7 @@ local function findNearestVertex(vert)
   end
 end
 
-local function updateStart()
+function updateStart()
     -- clear the Path canvas
     map:clearPathCanvas()
 
@@ -172,7 +173,7 @@ local function updateStart()
     motorcade:setStart(start)
 end
 
-local function updateGoal()
+function updateGoal()
     motorcade:updatePath(vertices, graph, goal)
     updateStart()
 end
