@@ -38,6 +38,7 @@ local slider2
 local slider3
 local slider4
 local checkbox1
+local button
 
 function GraphicalUserInterface:__init(ps)
     self.ps             = ps
@@ -48,6 +49,7 @@ function GraphicalUserInterface:__init(ps)
     self.boidSpeed      = slider4
     self.demoSpeed      = slider5
     self.seperation     = checkbox1
+    self.restart        = button 
 end
 
 function GraphicalUserInterface:mouseReleased(x, y, button, start, goal)
@@ -242,27 +244,24 @@ function GraphicalUserInterface:initVars()
     -- then a checkbox for Boid Separation
     checkbox1 = loveframes.Create("checkbox", panel)
     checkbox1:SetText("Boid Separation")
-    checkbox1:SetPos(20*ps, 340*ps)
+    checkbox1:SetPos(20*ps, 390*ps)
     checkbox1:SetFont(love.graphics.newFont(12*ps))
     checkbox1:SetChecked(true)
 
     --------------------------------------
          
-    local button = loveframes.Create("button", panel)
-    button:SetPos(20*ps, 390*ps)
+    button = loveframes.Create("button", panel)
+    -- button:SetPos(20*ps, 450*ps)
     button:SetWidth(500)
     button:SetHeight(50)
-    button:SetText("Restart")
+    button:SetText("Generate Map")
     button:Center()
     button.OnClick = function(object, x, y)
-    object:SetEnabled(true)
+        object:SetText("Loading")
     end
     button.OnMouseExit = function(object)
-object:SetText("The mouse exited the button.")
-end
-
-
-
+        object:SetText("Generate Map")
+    end 
 end 
 
 function GraphicalUserInterface:getAStarBoids()
@@ -287,6 +286,10 @@ end
 
 function GraphicalUserInterface:getDemoSpeed()
     return self.demoSpeed:GetValue()
+end 
+
+function GraphicalUserInterface:getRestart()
+    return self.restart:GetText()
 end 
 GUI = {
     GraphicalUserInterface = GraphicalUserInterface,

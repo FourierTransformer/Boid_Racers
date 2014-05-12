@@ -19,71 +19,75 @@ local roadRadius
 local borderSize
 local pause = false
 
+local function startSimulation()
+-- CONSTANTS BITCHES
+math.randomseed( os.time() )
+vertDistro = {math.random(10, 50), math.random(10, 50), math.random(10, 50), math.random(10, 50)} --for each quadrant
+numberVerts = 0
+for i, v in ipairs(vertDistro) do numberVerts = numberVerts + v end
+local width, height = love.graphics.getDimensions() --10000, 10000
+width = width - (300 * love.window.getPixelScale())
+roadRadius = 20 * love.window.getPixelScale()
+borderSize = roadRadius/10
+
+-- Cursors
+handCursor = love.mouse.getSystemCursor("hand")
+
+-- create startCursor
+local startCursorCanvas = love.graphics.newCanvas( 100, 100 )
+love.graphics.setCanvas(startCursorCanvas)
+love.graphics.setColor(0, 255, 0, 128)
+love.graphics.circle("fill", 50, 50, ((roadRadius - borderSize)/2))
+love.graphics.setCanvas()
+startCursor = love.mouse.newCursor(startCursorCanvas:getImageData(), 50, 50)
+
+-- create goalCursor
+local goalCursorCanvas = love.graphics.newCanvas( 100, 100 )
+love.graphics.setCanvas(startCursorCanvas)
+love.graphics.setColor(255, 0, 0, 128)
+love.graphics.circle("fill", 50, 50, ((roadRadius - borderSize)/2))
+love.graphics.setCanvas()
+goalCursor = love.mouse.newCursor(startCursorCanvas:getImageData(), 50, 50)
+
+-- Generate the map
+map = Map:new(roadRadius, width, height)
+vertices = map.vertices
+graph = map.graph
+-- print("Road/minimap Texture Generation: ", os.clock() - tick)
+
+-- figure out the start/end nodes
+start = vertices[math.floor((math.random() * #vertices/4))]
+goal = vertices[math.floor((math.random(2*#vertices/4, #vertices)))]
+
+-- Create the motorcade and add 60 cars to each Algo!
+motorcade = Motorcade:new(roadRadius)
+
+-- Do some aStar!
+local path = PathFinding.aStar(vertices, graph, start, goal)
+map:setPath(path, "yellow")
+motorcade:add(start.x, start.y, path, 60, "yellow")
+
+-- GBFS
+local path2 = PathFinding.GBFS(vertices, graph, start, goal)
+map:setPath(path2, "magenta")
+motorcade:add(start.x, start.y, path2, 60, "magenta")
+
+-- and uniform cost!
+local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
+map:setPath(path3, "cyan")
+motorcade:add(start.x, start.y, path3, 60, "cyan")
+
+-- get the GUI class to reference later
+local ps = love.window.getPixelScale()
+GUI = GraphicalUserInterface:new(ps)
+end 
+
 function love.load()
     -- SETTING IT UP!
     love.window.setTitle("Boid Racers")
     love.window.setMode(1280, 720, {highdpi = true})
-
-    -- CONSTANTS BITCHES
-    math.randomseed( os.time() )
-    vertDistro = {math.random(10, 50), math.random(10, 50), math.random(10, 50), math.random(10, 50)} --for each quadrant
-    numberVerts = 0
-    for i, v in ipairs(vertDistro) do numberVerts = numberVerts + v end
-    local width, height = love.graphics.getDimensions() --10000, 10000
-    width = width - (300 * love.window.getPixelScale())
-    roadRadius = 20 * love.window.getPixelScale()
-    borderSize = roadRadius/10
-
-    -- Cursors
-    handCursor = love.mouse.getSystemCursor("hand")
-
-    -- create startCursor
-    local startCursorCanvas = love.graphics.newCanvas( 100, 100 )
-    love.graphics.setCanvas(startCursorCanvas)
-    love.graphics.setColor(0, 255, 0, 128)
-    love.graphics.circle("fill", 50, 50, ((roadRadius - borderSize)/2))
-    love.graphics.setCanvas()
-    startCursor = love.mouse.newCursor(startCursorCanvas:getImageData(), 50, 50)
-
-    -- create goalCursor
-    local goalCursorCanvas = love.graphics.newCanvas( 100, 100 )
-    love.graphics.setCanvas(startCursorCanvas)
-    love.graphics.setColor(255, 0, 0, 128)
-    love.graphics.circle("fill", 50, 50, ((roadRadius - borderSize)/2))
-    love.graphics.setCanvas()
-    goalCursor = love.mouse.newCursor(startCursorCanvas:getImageData(), 50, 50)
-
-    -- Generate the map
-    map = Map:new(roadRadius, width, height)
-    vertices = map.vertices
-    graph = map.graph
-    -- print("Road/minimap Texture Generation: ", os.clock() - tick)
-
-    -- figure out the start/end nodes
-    start = vertices[math.floor((math.random() * #vertices/4))]
-    goal = vertices[math.floor((math.random(2*#vertices/4, #vertices)))]
-
-    -- Create the motorcade and add 60 cars to each Algo!
-    motorcade = Motorcade:new(roadRadius)
-
-    -- Do some aStar!
-    local path = PathFinding.aStar(vertices, graph, start, goal)
-    map:setPath(path, "yellow")
-    motorcade:add(start.x, start.y, path, 60, "yellow")
-
-    -- GBFS
-    local path2 = PathFinding.GBFS(vertices, graph, start, goal)
-    map:setPath(path2, "magenta")
-    motorcade:add(start.x, start.y, path2, 60, "magenta")
-
-    -- and uniform cost!
-    local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
-    map:setPath(path3, "cyan")
-    motorcade:add(start.x, start.y, path3, 60, "cyan")
-
-    -- get the GUI class to reference later
-    local ps = love.window.getPixelScale()
-    GUI = GraphicalUserInterface:new(ps)
+    -- Run the Simulation
+    startSimulation()
 end
 
 function love.keypressed(key)
@@ -93,6 +97,10 @@ function love.keypressed(key)
  end
 
 function love.update(dt)
+    -- Check to see if we need to restart the simulation
+    if GUI:getRestart() == "Loading" then
+        startSimulation()
+    end
     if pause then 
         dt = 0
     end
