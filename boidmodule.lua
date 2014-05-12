@@ -135,7 +135,12 @@ end
 
 -- handles changes to paths
 local colorToPath = {}
-
+-- keeps track of the amount of boids in each path
+local colorToNum = {
+    ["yellow"] = 0,
+    ["magenta"] = 0,
+    ["cyan"] = 0,
+}
 --- `Boid` class
 -- @type Boid
 local Boid = class()
@@ -234,6 +239,9 @@ Motorcade.__tostring = function(r) return "" end
 function Motorcade:__init(roadRadius)
     self.boids = {}
     self.roadRadius = roadRadius
+    self.numAStar = 0
+    self.numGBFS = 0
+    self.numUniform = 0
 end
 
 function Motorcade:setStart(v)
@@ -273,13 +281,17 @@ function Motorcade:separation(boid)
     return c
 end
 
-function Motorcade:update(dt)
+function Motorcade:update(dt, aStarNum, GBFSNum, uniformNum, startX, startY)
     for i, b in ipairs(self.boids) do
         -- rules go here
         b.velocity = b.velocity + self:separation(b):scalarMult(dt)
-
         b:update(dt, self.roadRadius)
     end
+    if aStarNum < colorToNum["yellow"] then 
+        self:remove(colorToNum["yellow"] - aStarNum, "yellow" )
+    elseif aStarNum > colorToNum["yellow"] then
+        self:add(startX, startY, colorToPath["yellow"], aStarNum - colorToNum["yellow"], "yellow") 
+    end 
 end
 
 
@@ -291,10 +303,28 @@ end
 
 function Motorcade:add(x, y, path, number, color)
     colorToPath[color] = path
+    colorToNum[color] = colorToNum[color] + number
     for i = 1, number do
         local id = #self.boids+1
         self.boids[ id ] = Boid:new(id, x, y, path, color)
     end
+end
+
+function Motorcade:remove(number, color)
+    local removed = 0
+    local index = 1
+    colorToNum[color] = colorToNum[color] - number
+    while removed < number do
+        local currentBoid = self.boids[index]
+        if currentBoid.color == color then
+            table.remove(self.boids, index)
+        end 
+        removed = removed + 1
+        index = index + 1
+        if index >= #self.boids then
+            return
+        end
+    end 
 end
 
 

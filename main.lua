@@ -5,6 +5,8 @@ local PathFinding = require 'pathfinding'
 local BoidModule  = require 'boidmodule'
 local Motorcade   = BoidModule.Motorcade
 local Vector      = BoidModule.Vector
+local GUI         = require 'gui'
+local GraphicalUserInterface = GUI.GraphicalUserInterface
 
 -- variables for this file
 local start
@@ -20,8 +22,6 @@ function love.load()
     -- SETTING IT UP!
     love.window.setTitle("Boid Racers")
     love.window.setMode(1280, 720, {highdpi = true})
-    require('loveframes')
-    require('gui')
 
     -- CONSTANTS BITCHES
     math.randomseed( os.time() )
@@ -79,11 +79,15 @@ function love.load()
     local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
     map:setPath(path3, "cyan")
     motorcade:add(start.x, start.y, path3, 60, "cyan")
+
+    -- get the GUI class to reference later
+    local ps = love.window.getPixelScale()
+    GUI = GraphicalUserInterface:new(ps)
 end
 
 function love.update(dt)
-    motorcade:update(dt)
-    loveframes.update(dt)
+    GUI:update()
+    motorcade:update(dt, GUI:getAStarBoids(), GUI:getGBFSBoids(), GUI:getUniformBoids(), start.x, start.y)
 end
 
 -- draw ALL THE THINGS
@@ -111,27 +115,11 @@ function love.draw()
     love.graphics.print("Nate Balas & Shakil Thakur", 1050*ps, 60*ps, 0, ps, ps)
 
     -- GUI
-    loveframes.draw()
+    GUI:draw()
 end
 
 function love.mousepressed(x, y, button)
-
-  -- LOVEFRAMES
-  loveframes.mousepressed(x, y, button)
-
-  if button == "l" then
-    local mouseVec = Vector:new(x,y)
-    
-    if distance(start, mouseVec) < 100 then
-      love.mouse.setCursor(startCursor)
-    end
-
-    if distance(goal, mouseVec) < 100 then
-      love.mouse.setCursor(goalCursor)
-    end
-
-  end
-
+    GUI:mousePressed(x, y, button, start, goal)
 end
 
 local function findNearestVertex(vert)
@@ -180,30 +168,7 @@ local function updateGoal()
 end
 
 function love.mousereleased(x, y, button)
-    loveframes.mousereleased(x, y, button)
-
-    if button == "l" then
-        -- create vector with mouse coords
-        local mouseLoc = Vector:new(x, y)
-        if love.mouse.getCursor() == goalCursor then
-            local newGoal = findNearestVertex(mouseLoc)
-            if newGoal ~= nil then
-                goal = newGoal
-                updateGoal()
-            end
-        
-        -- if startCursor is changed
-        elseif love.mouse.getCursor() == startCursor then
-            local newStart = findNearestVertex(mouseLoc)
-            if newStart ~= nil then
-                start = newStart
-                updateStart()
-            end
-        end
-
-        -- set cursor back
-        love.mouse.setCursor()
-    end
+    GUI:mouseReleased(x, y, button, start, goal)
 end
 
 -- anything special on quit?
