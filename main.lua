@@ -90,6 +90,10 @@ function startSimulation()
     local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
     map:setPath(path3, "cyan")
     motorcade:add(start.x, start.y, path3, 60, "cyan")
+
+    -- Set some boid stuffs
+    updateNeighborDistance(GUI:getNeighborlyDistance())
+    updateBoidSize(GUI:getBoidSize())
 end 
 
 function love.load()
@@ -206,6 +210,14 @@ end
 local function updateGoal()
     motorcade:updatePath(vertices, graph, goal)
     updateStart()
+end
+
+function updateNeighborDistance(size)
+    motorcade:setNeighborDistance(size)
+end
+
+function updateBoidSize(size)
+    motorcade:setBoidSize(size)
 end
 
 function love.mousereleased(x, y, button)

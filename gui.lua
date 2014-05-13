@@ -325,11 +325,14 @@ function GraphicalUserInterface:initVars()
     slider9 = loveframes.Create("slider", frame)
     slider9:SetPos(1000*ps, 510*ps)
     slider9:SetWidth(270*ps)
-    slider9:SetMinMax(1, 100)
-    slider9:SetValue(20)
+    slider9:SetMinMax(1, 20)
+    slider9:SetValue(2)
     slider9:SetText("Boid Size")
     slider9:SetDecimals(0)
     slider9:SetState("boids")
+    slider9.OnValueChanged = function(object)
+        updateBoidSize(object:GetValue())
+    end
 
     local s9text1 = loveframes.Create("text", panel)
     s9text1:SetPos(20*ps, 500*ps)
@@ -348,41 +351,44 @@ function GraphicalUserInterface:initVars()
     slider10 = loveframes.Create("slider", frame)
     slider10:SetPos(1000*ps, 560*ps)
     slider10:SetWidth(270*ps)
-    slider10:SetMinMax(1, 100)
-    slider10:SetValue(20)
+    slider10:SetMinMax(1, 20)
+    slider10:SetValue(10)
     slider10:SetText("Neighborly Distance")
     slider10:SetDecimals(0)
     slider10:SetState("boids")
+    slider10.OnValueChanged = function(object)
+        updateNeighborDistance(object:GetValue())
+    end
 
-    local s9text1 = loveframes.Create("text", panel)
-    s9text1:SetPos(20*ps, 550*ps)
-    s9text1:SetFont(love.graphics.newFont(10*ps))
-    s9text1:SetText(slider10:GetText())
+    local s10text1 = loveframes.Create("text", panel)
+    s10text1:SetPos(20*ps, 550*ps)
+    s10text1:SetFont(love.graphics.newFont(10*ps))
+    s10text1:SetText(slider10:GetText())
 
-    local s9text2 = loveframes.Create("text", panel)
-    s9text2:SetFont(love.graphics.newFont(10*ps))
-    s9text2.Update = function(object, dt)
+    local s10text2 = loveframes.Create("text", panel)
+    s10text2:SetFont(love.graphics.newFont(10*ps))
+    s10text2.Update = function(object, dt)
         object:SetPos((290 - object:GetWidth())*ps, 550*ps)
         object:SetText(slider10:GetValue())
     end
 
     --------------------------------------
 
-    local panelWidth=300*ps
-    local panel2 = loveframes.Create("panel")
-    panel2:SetSize(panelWidth, 50)
-    panel2:SetPos(love.graphics.getWidth()-panelWidth, 590*ps)
-    panel2:SetState("boids")
+    -- local panelWidth=300*ps
+    -- local panel2 = loveframes.Create("panel")
+    -- panel2:SetSize(panelWidth, 50)
+    -- panel2:SetPos(love.graphics.getWidth()-panelWidth, 590*ps)
+    -- panel2:SetState("boids")
 
-    button1 = loveframes.Create("button", panel2)
-    -- button:SetPos(20*ps, 450*ps)
-    button1:SetWidth(500)
-    button1:SetHeight(50)
-    button1:SetText("Restart Simulation")
-    button1:Center()
-    button1.OnClick = function(object, x, y)
-        startSimulation()
-    end
+    -- button1 = loveframes.Create("button", panel2)
+    -- -- button:SetPos(20*ps, 450*ps)
+    -- button1:SetWidth(500)
+    -- button1:SetHeight(50)
+    -- button1:SetText("Restart Simulation")
+    -- button1:Center()
+    -- button1.OnClick = function(object, x, y)
+    --     startSimulation()
+    -- end
 
 
     --------------------------------------
@@ -521,6 +527,14 @@ end
 
 function GraphicalUserInterface:getRoadFrequency()
     return self.roadFrequency:GetValue()
+end 
+
+function GraphicalUserInterface:getBoidSize()
+    return self.boidSize:GetValue()
+end 
+
+function GraphicalUserInterface:getNeighborlyDistance()
+    return self.neighbordDist:GetValue()
 end 
 
 GUI = {
