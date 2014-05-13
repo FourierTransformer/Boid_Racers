@@ -90,6 +90,10 @@ function startSimulation()
     local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
     map:setPath(path3, "cyan")
     motorcade:add(start.x, start.y, path3, 60, "cyan")
+
+    -- Set some boid stuffs
+    updateNeighborDistance(GUI:getNeighborlyDistance())
+    updateBoidSize(GUI:getBoidSize())
 end 
 
 function love.load()
@@ -140,10 +144,12 @@ function love.draw()
 
     -- texty stuff
     local ps = love.window.getPixelScale()
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10, 0, love.window.getPixelScale(), love.window.getPixelScale())
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10, 0, ps, ps)
 
     -- GUI
     GUI:draw()
+
+    love.graphics.setColor(255, 255, 255)
 end
 
 function love.mousepressed(x, y, button)
@@ -206,6 +212,14 @@ end
 local function updateGoal()
     motorcade:updatePath(vertices, graph, goal)
     updateStart()
+end
+
+function updateNeighborDistance(size)
+    motorcade:setNeighborDistance(size)
+end
+
+function updateBoidSize(size)
+    motorcade:setBoidSize(size)
 end
 
 function love.mousereleased(x, y, button)

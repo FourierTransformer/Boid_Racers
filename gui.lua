@@ -41,7 +41,10 @@ local slider5
 local slider6
 local slider7
 local slider8
-local button
+local slider9
+local slider10
+local button1
+local button2
 
 local pslider1
 
@@ -56,7 +59,10 @@ function GraphicalUserInterface:__init(ps)
     self.seperation     = slider6
     self.cohesion       = slider7
     self.alginment      = slider8
-    self.restart        = button 
+    self.boidSize       = slider9
+    self.neighbordDist  = slider10
+    self.restart        = button1
+    self.restartSim     = button2
 
     self.roadFrequency  = pslider1
 end
@@ -76,6 +82,24 @@ end
 
 function GraphicalUserInterface:draw()
     loveframes.draw()
+    local ps = love.window.getPixelScale()
+    -- On top of the GUI, all covered in cheese. I found these three colors, when somebody sneezed!
+    if loveframes.GetState() == "boids" then
+        -- Yellow AStar
+        love.graphics.setColor(255, 255, 0)
+        love.graphics.setPointSize(5*ps)
+        love.graphics.point(1002*ps, 95*ps)
+
+        -- Magenta GBFS
+        love.graphics.setColor(255, 0, 255)
+        love.graphics.setPointSize(5*ps)
+        love.graphics.point(1002*ps, 155*ps)
+
+        -- Cyan Uniform Cost
+        love.graphics.setColor(0, 255, 255)
+        love.graphics.setPointSize(5*ps)
+        love.graphics.point(1002*ps, 205*ps)
+    end
 end 
 
 function GraphicalUserInterface:initVars()
@@ -137,7 +161,7 @@ function GraphicalUserInterface:initVars()
     slider1:SetWidth(270*ps)
     slider1:SetMinMax(1, 100)
     slider1:SetValue(60)
-    slider1:SetText("A* Boids")
+    slider1:SetText("   A* Boids")
     slider1:SetDecimals(0)
     slider1:SetState("boids")
 
@@ -160,7 +184,7 @@ function GraphicalUserInterface:initVars()
     slider2:SetWidth(270*ps)
     slider2:SetMinMax(1, 100)
     slider2:SetValue(60)
-    slider2:SetText("GBFS Boids")
+    slider2:SetText("   GBFS Boids")
     slider2:SetDecimals(0)
     slider2:SetState("boids")
 
@@ -183,7 +207,7 @@ function GraphicalUserInterface:initVars()
     slider3:SetWidth(270*ps)
     slider3:SetMinMax(1, 100)
     slider3:SetValue(60)
-    slider3:SetText("Uniform Cost Boids")
+    slider3:SetText("   Uniform Cost Boids")
     slider3:SetDecimals(0)
     slider3:SetState("boids")
 
@@ -316,19 +340,90 @@ function GraphicalUserInterface:initVars()
     
     --------------------------------------
 
+    slider9 = loveframes.Create("slider", frame)
+    slider9:SetPos(1000*ps, 510*ps)
+    slider9:SetWidth(270*ps)
+    slider9:SetMinMax(1, 20)
+    slider9:SetValue(2)
+    slider9:SetText("Boid Size")
+    slider9:SetDecimals(0)
+    slider9:SetState("boids")
+    slider9.OnValueChanged = function(object)
+        updateBoidSize(object:GetValue())
+    end
+
+    local s9text1 = loveframes.Create("text", panel)
+    s9text1:SetPos(20*ps, 500*ps)
+    s9text1:SetFont(love.graphics.newFont(10*ps))
+    s9text1:SetText(slider9:GetText())
+
+    local s9text2 = loveframes.Create("text", panel)
+    s9text2:SetFont(love.graphics.newFont(10*ps))
+    s9text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 500*ps)
+        object:SetText(slider9:GetValue())
+    end
+
+    --------------------------------------
+
+    slider10 = loveframes.Create("slider", frame)
+    slider10:SetPos(1000*ps, 560*ps)
+    slider10:SetWidth(270*ps)
+    slider10:SetMinMax(1, 20)
+    slider10:SetValue(10)
+    slider10:SetText("Neighborly Distance")
+    slider10:SetDecimals(0)
+    slider10:SetState("boids")
+    slider10.OnValueChanged = function(object)
+        updateNeighborDistance(object:GetValue())
+    end
+
+    local s10text1 = loveframes.Create("text", panel)
+    s10text1:SetPos(20*ps, 550*ps)
+    s10text1:SetFont(love.graphics.newFont(10*ps))
+    s10text1:SetText(slider10:GetText())
+
+    local s10text2 = loveframes.Create("text", panel)
+    s10text2:SetFont(love.graphics.newFont(10*ps))
+    s10text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 550*ps)
+        object:SetText(slider10:GetValue())
+    end
+
+    --------------------------------------
+
+    -- local panelWidth=300*ps
+    -- local panel2 = loveframes.Create("panel")
+    -- panel2:SetSize(panelWidth, 50)
+    -- panel2:SetPos(love.graphics.getWidth()-panelWidth, 590*ps)
+    -- panel2:SetState("boids")
+
+    -- button1 = loveframes.Create("button", panel2)
+    -- -- button:SetPos(20*ps, 450*ps)
+    -- button1:SetWidth(500)
+    -- button1:SetHeight(50)
+    -- button1:SetText("Restart Simulation")
+    -- button1:Center()
+    -- button1.OnClick = function(object, x, y)
+    --     startSimulation()
+    -- end
+
+
+    --------------------------------------
+
     local panelWidth=300*ps
     local panel2 = loveframes.Create("panel")
-    panel2:SetSize(panelWidth, 50)
-    panel2:SetPos(love.graphics.getWidth()-panelWidth, 1000)
+    panel2:SetSize(panelWidth, 25*ps)
+    panel2:SetPos(love.graphics.getWidth()-panelWidth, 620*ps)
     panel2:SetState("boids")
 
-    button = loveframes.Create("button", panel2)
+    button2 = loveframes.Create("button", panel2)
     -- button:SetPos(20*ps, 450*ps)
-    button:SetWidth(500)
-    button:SetHeight(50)
-    button:SetText("Generate Map")
-    button:Center()
-    button.OnClick = function(object, x, y)
+    button2:SetWidth(panelWidth)
+    button2:SetHeight(25*ps)
+    button2:SetText("Generate New Map")
+    button2:Center()
+    button2.OnClick = function(object, x, y)
         startSimulation()
     end
 
@@ -450,6 +545,14 @@ end
 
 function GraphicalUserInterface:getRoadFrequency()
     return self.roadFrequency:GetValue()
+end 
+
+function GraphicalUserInterface:getBoidSize()
+    return self.boidSize:GetValue()
+end 
+
+function GraphicalUserInterface:getNeighborlyDistance()
+    return self.neighbordDist:GetValue()
 end 
 
 GUI = {
