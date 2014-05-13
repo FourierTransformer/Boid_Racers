@@ -19,10 +19,23 @@ local roadRadius
 local borderSize
 local pause = false
 
-local function startSimulation()
+function startSimulation()
+    -- get the GUI class to reference later
+    local ps = love.window.getPixelScale()
+
     -- CONSTANTS BITCHES
     math.randomseed( os.time() )
-    vertDistro = {math.random(10, 50), math.random(10, 50), math.random(10, 50), math.random(10, 50)} --for each quadrant
+    
+    --for each quadrant
+    local rf = GUI:getRoadFrequency()
+    local lower = math.ceil(10*rf)
+    local upper = math.floor(50*rf)
+    vertDistro = { 
+        math.random(lower, upper),
+        math.random(lower, upper),
+        math.random(lower, upper),
+        math.random(lower, upper)
+    }
     numberVerts = 0
     for i, v in ipairs(vertDistro) do numberVerts = numberVerts + v end
     local width, height = love.graphics.getDimensions() --10000, 10000
@@ -56,7 +69,7 @@ local function startSimulation()
     -- print("Road/minimap Texture Generation: ", os.clock() - tick)
 
     -- figure out the start/end nodes
-    start = vertices[math.floor((math.random() * #vertices/4))]
+    start = vertices[math.ceil((math.random() * #vertices/4))]
     goal = vertices[math.floor((math.random(2*#vertices/4, #vertices)))]
 
     -- Create the motorcade and add 60 cars to each Algo!
@@ -76,16 +89,17 @@ local function startSimulation()
     local path3 = PathFinding.uniformCost(vertices, graph, start, goal)
     map:setPath(path3, "cyan")
     motorcade:add(start.x, start.y, path3, 60, "cyan")
-
-    -- get the GUI class to reference later
-    local ps = love.window.getPixelScale()
-    GUI = GraphicalUserInterface:new(ps)
 end 
 
 function love.load()
     -- SETTING IT UP!
     love.window.setTitle("Boid Racers")
     love.window.setMode(1280, 720, {highdpi = true})
+
+    -- Load up the gui
+    local ps = love.window.getPixelScale()
+    GUI = GraphicalUserInterface:new(ps)
+
     -- Run the Simulation
     startSimulation()
 end
@@ -97,10 +111,6 @@ function love.keypressed(key)
  end
 
 function love.update(dt)
-    -- Check to see if we need to restart the simulation
-    if GUI:getRestart() == "Loading" then
-        startSimulation()
-    end
     if pause then 
         dt = 0
     end
