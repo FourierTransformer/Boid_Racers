@@ -282,7 +282,7 @@ function Motorcade:updatePath(vertices, graph, goal)
 end
 
 function Motorcade:separation(boid)
-    local neighborDist = self.neighborDist
+    local neighborDist = 15
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
         if boid ~= v then
