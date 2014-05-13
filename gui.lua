@@ -43,6 +43,8 @@ local slider7
 local slider8
 local button
 
+local pslider1
+
 function GraphicalUserInterface:__init(ps)
     self.ps             = ps
     self:initVars()
@@ -55,6 +57,8 @@ function GraphicalUserInterface:__init(ps)
     self.cohesion       = slider7
     self.alginment      = slider8
     self.restart        = button 
+
+    self.roadFrequency  = pslider1
 end
 
 function GraphicalUserInterface:mouseReleased(x, y, button, start, goal)
@@ -325,11 +329,8 @@ function GraphicalUserInterface:initVars()
     button:SetText("Generate Map")
     button:Center()
     button.OnClick = function(object, x, y)
-        object:SetText("Loading")
+        startSimulation()
     end
-    button.OnMouseExit = function(object)
-        object:SetText("Generate Map")
-    end 
 
 
     --------------------------------------
@@ -383,6 +384,32 @@ function GraphicalUserInterface:initVars()
     ptext1:SetText("BOID RACERS\nNate Balas & Shakil Thakur")
     plist1:AddItem(ptext1)
 
+    --------------------------------------
+    -- Road Frequency
+    pslider1 = loveframes.Create("slider", frame)
+    pslider1:SetPos(1000*ps, 110*ps)
+    pslider1:SetWidth(270*ps)
+    pslider1:SetMinMax(.1, 1)
+    pslider1:SetValue(1)
+    pslider1:SetText("Road Frequency")
+    pslider1:SetDecimals(2)
+    pslider1:SetState("paths")
+    pslider1.OnRelease = function(object)
+        startSimulation()
+    end
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 90*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText(pslider1:GetText())
+
+    local ps1text2 = loveframes.Create("text", ppanel)
+    ps1text2:SetFont(love.graphics.newFont(10*ps))
+    ps1text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 90*ps)
+        object:SetText(pslider1:GetValue())
+    end
+
 end 
 
 function GraphicalUserInterface:getAStarBoids()
@@ -420,6 +447,11 @@ end
 function GraphicalUserInterface:getAlignment()
     return self.alginment:GetValue()
 end 
+
+function GraphicalUserInterface:getRoadFrequency()
+    return self.roadFrequency:GetValue()
+end 
+
 GUI = {
     GraphicalUserInterface = GraphicalUserInterface,
     _VERSION = "SUPER-BETA"
