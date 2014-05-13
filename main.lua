@@ -144,10 +144,29 @@ function love.draw()
 
     -- texty stuff
     local ps = love.window.getPixelScale()
-    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10, 0, love.window.getPixelScale(), love.window.getPixelScale())
+    love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10, 0, ps, ps)
 
     -- GUI
     GUI:draw()
+
+    -- On top of the GUI, all covered in cheese. I found these three colors, when somebody sneezed!
+    -- HACKS. TODO: this should probably be put somewhere else. meh...
+    -- Yellow AStar
+    love.graphics.setColor(255, 255, 0)
+    love.graphics.setPointSize(5*ps)
+    love.graphics.point(1002*ps, 95*ps)
+
+    -- Magenta GBFS
+    love.graphics.setColor(255, 0, 255)
+    love.graphics.setPointSize(5*ps)
+    love.graphics.point(1002*ps, 155*ps)
+
+    -- Cyan Uniform Cost
+    love.graphics.setColor(0, 255, 255)
+    love.graphics.setPointSize(5*ps)
+    love.graphics.point(1002*ps, 205*ps)
+
+    love.graphics.setColor(255, 255, 255)
 end
 
 function love.mousepressed(x, y, button)
