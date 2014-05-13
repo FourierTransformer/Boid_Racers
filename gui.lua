@@ -44,6 +44,9 @@ local slider8
 local button
 
 local pslider1
+local multichoice1
+local multichoice2
+local multichoice3
 
 function GraphicalUserInterface:__init(ps)
     self.ps             = ps
@@ -59,6 +62,9 @@ function GraphicalUserInterface:__init(ps)
     self.restart        = button 
 
     self.roadFrequency  = pslider1
+    self.yellowBoids    = multichoice1
+    self.magentaBoids   = multichoice2
+    self.cyanBoids      = multichoice3
 end
 
 function GraphicalUserInterface:mouseReleased(x, y, button, start, goal)
@@ -81,11 +87,151 @@ end
 function GraphicalUserInterface:initVars()
     -- Define our locals and create the GUI interface
     local ps = self.ps
+    local panelWidth=300*ps
 
     --------------------------------------
+    -- start in the boid state
     loveframes.SetState("boids")
 
-    local panelWidth=300*ps
+    --------------------------------------
+    -- create the path setings
+    local ppanel = loveframes.Create("panel")
+    ppanel:SetSize(panelWidth, love.graphics.getHeight())
+    ppanel:SetPos(love.graphics.getWidth()-panelWidth, 0)
+    ppanel:SetState("paths")
+
+             
+    local pform = loveframes.Create("form", frame)
+    pform:SetPos(love.graphics.getWidth()-panelWidth, 650*ps)
+    pform:SetSize(panelWidth, 65*ps)
+    pform:SetLayoutType("horizontal")
+    pform:SetName("Settings")
+    pform:SetState("paths")
+         
+    local psettings1 = loveframes.Create("button")
+    psettings1:SetText("Boids")
+    psettings1:SetWidth((300/2-5)*ps)
+    psettings1.OnClick = function (object)
+        loveframes.SetState("boids")
+    end
+    pform:AddItem(psettings1)
+
+
+    local psettings2 = loveframes.Create("button")
+    psettings2:SetText("Paths")
+    psettings2:SetWidth((300/2-5)*ps)
+    psettings2.OnClick = function (object)
+        loveframes.SetState("paths")
+    end
+    pform:AddItem(psettings2)
+
+    -- Just text things apparently
+    local plist1 = loveframes.Create("list", frame)
+    plist1:SetPos(980*ps, 0)
+    plist1:SetSize(300*ps, 70*ps)
+    plist1:SetPadding(20)
+    plist1:SetSpacing(10)
+    plist1:SetState("paths")
+
+    -- IT'S US!
+    local ptext1 = loveframes.Create("text")
+    ptext1:SetFont(love.graphics.newFont(12*ps))
+    ptext1:SetText("BOID RACERS\nNate Balas & Shakil Thakur")
+    plist1:AddItem(ptext1)
+
+    --------------------------------------
+    -- Road Frequency
+    pslider1 = loveframes.Create("slider", frame)
+    pslider1:SetPos(1000*ps, 110*ps)
+    pslider1:SetWidth(270*ps)
+    pslider1:SetMinMax(.1, 1)
+    pslider1:SetValue(1)
+    pslider1:SetText("Road Frequency")
+    pslider1:SetDecimals(2)
+    pslider1:SetState("paths")
+    pslider1.OnRelease = function(object)
+        startSimulation()
+    end
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 90*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText(pslider1:GetText())
+
+    local ps1text2 = loveframes.Create("text", ppanel)
+    ps1text2:SetFont(love.graphics.newFont(10*ps))
+    ps1text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 90*ps)
+        object:SetText(pslider1:GetValue())
+    end
+    
+    --------------------------------------
+    -- Choose a pathfinding algo (Yellow)
+    multichoice1 = loveframes.Create("multichoice", ppanel)
+    multichoice1:SetPos(20*ps, 160*ps)
+    multichoice1:SetWidth(270*ps)
+    multichoice1:AddChoice("A*")
+    multichoice1:AddChoice("GBFS")
+    multichoice1:AddChoice("Uniform Cost")
+    multichoice1:AddChoice("DFS")
+    multichoice1:AddChoice("BFS")
+    multichoice1:SetChoice("A*")
+    multichoice1.OnChoiceSelected = function(object, choice)
+        slider1:SetText(multichoice1:GetChoice() .. " Boids")
+    end
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 140*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText("Yellow Boids:")
+
+
+
+    --------------------------------------
+    -- Magenta
+    multichoice2 = loveframes.Create("multichoice", ppanel)
+    multichoice2:SetPos(20*ps, 220*ps)
+    multichoice2:SetWidth(270*ps)
+    multichoice2:AddChoice("A*")
+    multichoice2:AddChoice("GBFS")
+    multichoice2:AddChoice("Uniform Cost")
+    multichoice2:AddChoice("DFS")
+    multichoice2:AddChoice("BFS")
+    multichoice2:SetChoice("GBFS")
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 200*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText("Magenta Boids:")
+
+    --------------------------------------
+    -- Cyan
+    multichoice3 = loveframes.Create("multichoice", ppanel)
+    multichoice3:SetPos(20*ps, 270*ps)
+    multichoice3:SetWidth(270*ps)
+    multichoice3:AddChoice("A*")
+    multichoice3:AddChoice("GBFS")
+    multichoice3:AddChoice("Uniform Cost")
+    multichoice3:AddChoice("DFS")
+    multichoice3:AddChoice("BFS")
+    multichoice3:SetChoice("Uniform Cost")
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 250*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText("Magenta Boids:")
+
+
+
+
+--------------------------------------
+    --------------------------------------
+    --------------------------------------
+    --AND NOW FOR THE bOID SETTINGS-------
+    --------------------------------------
+    --------------------------------------
+    --------------------------------------
+
     local panel = loveframes.Create("panel")
     panel:SetSize(panelWidth, love.graphics.getHeight())
     panel:SetPos(love.graphics.getWidth()-panelWidth, 0)
@@ -137,7 +283,7 @@ function GraphicalUserInterface:initVars()
     slider1:SetWidth(270*ps)
     slider1:SetMinMax(1, 100)
     slider1:SetValue(60)
-    slider1:SetText("A* Boids")
+    slider1:SetText(multichoice1:GetChoice() .. " Boids")
     slider1:SetDecimals(0)
     slider1:SetState("boids")
 
@@ -331,136 +477,6 @@ function GraphicalUserInterface:initVars()
     button.OnClick = function(object, x, y)
         startSimulation()
     end
-
-
-    --------------------------------------
-    --------------------------------------
-    --------------------------------------
-    --AND NOW FOR THE PATH SETTINGS-------
-    --------------------------------------
-    --------------------------------------
-    --------------------------------------
-    local ppanel = loveframes.Create("panel")
-    ppanel:SetSize(panelWidth, love.graphics.getHeight())
-    ppanel:SetPos(love.graphics.getWidth()-panelWidth, 0)
-    ppanel:SetState("paths")
-
-             
-    local pform = loveframes.Create("form", frame)
-    pform:SetPos(love.graphics.getWidth()-panelWidth, 650*ps)
-    pform:SetSize(panelWidth, 65*ps)
-    pform:SetLayoutType("horizontal")
-    pform:SetName("Settings")
-    pform:SetState("paths")
-         
-    local psettings1 = loveframes.Create("button")
-    psettings1:SetText("Boids")
-    psettings1:SetWidth((300/2-5)*ps)
-    psettings1.OnClick = function (object)
-        loveframes.SetState("boids")
-    end
-    pform:AddItem(psettings1)
-
-
-    local psettings2 = loveframes.Create("button")
-    psettings2:SetText("Paths")
-    psettings2:SetWidth((300/2-5)*ps)
-    psettings2.OnClick = function (object)
-        loveframes.SetState("paths")
-    end
-    pform:AddItem(psettings2)
-
-    -- Just text things apparently
-    local plist1 = loveframes.Create("list", frame)
-    plist1:SetPos(980*ps, 0)
-    plist1:SetSize(300*ps, 70*ps)
-    plist1:SetPadding(20)
-    plist1:SetSpacing(10)
-    plist1:SetState("paths")
-
-    -- IT'S US!
-    local ptext1 = loveframes.Create("text")
-    ptext1:SetFont(love.graphics.newFont(12*ps))
-    ptext1:SetText("BOID RACERS\nNate Balas & Shakil Thakur")
-    plist1:AddItem(ptext1)
-
-    --------------------------------------
-    -- Road Frequency
-    pslider1 = loveframes.Create("slider", frame)
-    pslider1:SetPos(1000*ps, 110*ps)
-    pslider1:SetWidth(270*ps)
-    pslider1:SetMinMax(.1, 1)
-    pslider1:SetValue(1)
-    pslider1:SetText("Road Frequency")
-    pslider1:SetDecimals(2)
-    pslider1:SetState("paths")
-    pslider1.OnRelease = function(object)
-        startSimulation()
-    end
-
-    local ps1text1 = loveframes.Create("text", ppanel)
-    ps1text1:SetPos(20*ps, 90*ps)
-    ps1text1:SetFont(love.graphics.newFont(10*ps))
-    ps1text1:SetText(pslider1:GetText())
-
-    local ps1text2 = loveframes.Create("text", ppanel)
-    ps1text2:SetFont(love.graphics.newFont(10*ps))
-    ps1text2.Update = function(object, dt)
-        object:SetPos((290 - object:GetWidth())*ps, 90*ps)
-        object:SetText(pslider1:GetValue())
-    end
-    
-    --------------------------------------
-    -- Choose a pathfinding algo (Yellow)
-    local multichoice = loveframes.Create("multichoice", ppanel)
-    multichoice:SetPos(20*ps, 160*ps)
-    multichoice:SetWidth(270*ps)
-    multichoice:AddChoice("A*")
-    multichoice:AddChoice("GBFS")
-    multichoice:AddChoice("Uniform Cost")
-    multichoice:AddChoice("DFS")
-    multichoice:AddChoice("BFS")
-    multichoice:SetChoice("A*")
-
-    local ps1text1 = loveframes.Create("text", ppanel)
-    ps1text1:SetPos(20*ps, 140*ps)
-    ps1text1:SetFont(love.graphics.newFont(10*ps))
-    ps1text1:SetText("Yellow Boids:")
-
-
-    --------------------------------------
-    -- Magenta
-    local multichoice = loveframes.Create("multichoice", ppanel)
-    multichoice:SetPos(20*ps, 220*ps)
-    multichoice:SetWidth(270*ps)
-    multichoice:AddChoice("A*")
-    multichoice:AddChoice("GBFS")
-    multichoice:AddChoice("Uniform Cost")
-    multichoice:AddChoice("DFS")
-    multichoice:AddChoice("BFS")
-    multichoice:SetChoice("GBFS")
-
-    local ps1text1 = loveframes.Create("text", ppanel)
-    ps1text1:SetPos(20*ps, 200*ps)
-    ps1text1:SetFont(love.graphics.newFont(10*ps))
-    ps1text1:SetText("Magenta Boids:")
-
-    --------------------------------------
-    -- Cyan
-    local multichoice = loveframes.Create("multichoice", ppanel)
-    multichoice:SetPos(20*ps, 270*ps)
-    multichoice:SetWidth(270*ps)
-    multichoice:AddChoice("A*")
-    multichoice:AddChoice("GBFS")
-    multichoice:AddChoice("Uniform Cost")
-    multichoice:AddChoice("DFS")
-    multichoice:AddChoice("BFS")
-    multichoice:SetChoice("Uniform Cost")
-
-    local ps1text1 = loveframes.Create("text", ppanel)
-    ps1text1:SetPos(20*ps, 250*ps)
-    ps1text1:SetFont(love.graphics.newFont(10*ps))
-    ps1text1:SetText("Magenta Boids:")
 
 end 
 
