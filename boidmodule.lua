@@ -136,11 +136,7 @@ end
 -- handles changes to paths
 local colorToPath = {}
 -- keeps track of the amount of boids in each path
-local colorToNum = {
-    ["yellow"] = 0,
-    ["magenta"] = 0,
-    ["cyan"] = 0,
-}
+local colorToNum
 -- looks up the color for a certain algorithm
 local algoToColor = {
     ["aStar"]   = "yellow",
@@ -248,6 +244,12 @@ function Motorcade:__init(roadRadius)
     self.numAStar = 0
     self.numGBFS = 0
     self.numUniform = 0
+
+    colorToNum = {
+    ["yellow"] = 0,
+    ["magenta"] = 0,
+    ["cyan"] = 0,
+    }
 end
 
 function Motorcade:setStart(v)
@@ -304,7 +306,6 @@ function Motorcade:update(dt, doSeperation, boidSpeed, aStarNum, GBFSNum, unifor
     local aStarColor  = algoToColor["aStar"]
     local GBFSColor   = algoToColor["GBFS"]
     local uniform     = algoToColor["uniform"]
-
     self:adjustNumBoids(startX, startY, aStarNum, colorToNum[aStarColor], aStarColor, colorToPath[aStarColor] )
     self:adjustNumBoids(startX, startY, GBFSNum, colorToNum[GBFSColor], GBFSColor, colorToPath[GBFSColor] )
     self:adjustNumBoids(startX, startY, uniformNum, colorToNum[uniform], uniform, colorToPath[uniform] )
