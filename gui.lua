@@ -41,7 +41,10 @@ local slider5
 local slider6
 local slider7
 local slider8
-local button
+local slider9
+local slider10
+local button1
+local button2
 
 local pslider1
 
@@ -56,7 +59,10 @@ function GraphicalUserInterface:__init(ps)
     self.seperation     = slider6
     self.cohesion       = slider7
     self.alginment      = slider8
-    self.restart        = button 
+    self.boidSize       = slider9
+    self.neighbordDist  = slider10
+    self.restart        = button1
+    self.restartSim     = button2
 
     self.roadFrequency  = pslider1
 end
@@ -316,19 +322,84 @@ function GraphicalUserInterface:initVars()
     
     --------------------------------------
 
+    slider9 = loveframes.Create("slider", frame)
+    slider9:SetPos(1000*ps, 510*ps)
+    slider9:SetWidth(270*ps)
+    slider9:SetMinMax(1, 100)
+    slider9:SetValue(20)
+    slider9:SetText("Boid Size")
+    slider9:SetDecimals(0)
+    slider9:SetState("boids")
+
+    local s9text1 = loveframes.Create("text", panel)
+    s9text1:SetPos(20*ps, 500*ps)
+    s9text1:SetFont(love.graphics.newFont(10*ps))
+    s9text1:SetText(slider9:GetText())
+
+    local s9text2 = loveframes.Create("text", panel)
+    s9text2:SetFont(love.graphics.newFont(10*ps))
+    s9text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 500*ps)
+        object:SetText(slider9:GetValue())
+    end
+
+    --------------------------------------
+
+    slider10 = loveframes.Create("slider", frame)
+    slider10:SetPos(1000*ps, 560*ps)
+    slider10:SetWidth(270*ps)
+    slider10:SetMinMax(1, 100)
+    slider10:SetValue(20)
+    slider10:SetText("Neighborly Distance")
+    slider10:SetDecimals(0)
+    slider10:SetState("boids")
+
+    local s9text1 = loveframes.Create("text", panel)
+    s9text1:SetPos(20*ps, 550*ps)
+    s9text1:SetFont(love.graphics.newFont(10*ps))
+    s9text1:SetText(slider10:GetText())
+
+    local s9text2 = loveframes.Create("text", panel)
+    s9text2:SetFont(love.graphics.newFont(10*ps))
+    s9text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 550*ps)
+        object:SetText(slider10:GetValue())
+    end
+
+    --------------------------------------
+
     local panelWidth=300*ps
     local panel2 = loveframes.Create("panel")
     panel2:SetSize(panelWidth, 50)
-    panel2:SetPos(love.graphics.getWidth()-panelWidth, 1000)
+    panel2:SetPos(love.graphics.getWidth()-panelWidth, 590*ps)
     panel2:SetState("boids")
 
-    button = loveframes.Create("button", panel2)
+    button1 = loveframes.Create("button", panel2)
     -- button:SetPos(20*ps, 450*ps)
-    button:SetWidth(500)
-    button:SetHeight(50)
-    button:SetText("Generate Map")
-    button:Center()
-    button.OnClick = function(object, x, y)
+    button1:SetWidth(500)
+    button1:SetHeight(50)
+    button1:SetText("Restart Simulation")
+    button1:Center()
+    button1.OnClick = function(object, x, y)
+        startSimulation()
+    end
+
+
+    --------------------------------------
+
+    local panelWidth=300*ps
+    local panel2 = loveframes.Create("panel")
+    panel2:SetSize(panelWidth, 50)
+    panel2:SetPos(love.graphics.getWidth()-panelWidth, 620*ps)
+    panel2:SetState("boids")
+
+    button2 = loveframes.Create("button", panel2)
+    -- button:SetPos(20*ps, 450*ps)
+    button2:SetWidth(500)
+    button2:SetHeight(50)
+    button2:SetText("Generate New Map")
+    button2:Center()
+    button2.OnClick = function(object, x, y)
         startSimulation()
     end
 
