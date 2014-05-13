@@ -166,6 +166,8 @@ function Boid:__init(id, x, y, path, color)
     self.index = 1
     self.color = color
 
+    self.size = 2
+
     self.maxSpeed = 15
     self.maxForce = 5
 end
@@ -219,7 +221,7 @@ end
 
 function Boid:draw(roadRadius)
     colors[self.color]()
-    love.graphics.circle( "fill", self.position.x, self.position.y, roadRadius/10)
+    love.graphics.circle( "fill", self.position.x, self.position.y, self.size)
     love.graphics.setColor(255,255,255)
 end
 
@@ -232,6 +234,9 @@ function Boid:seek(target)
     return steerForce
 end
 
+function Boid:setSize(size)
+    self.size = size
+end
 
 
 --- `Motorcade` class
@@ -248,6 +253,8 @@ function Motorcade:__init(roadRadius)
     self.numGBFS = 0
     self.numUniform = 0
     self.neighborDist = 20
+    self.pixelScale = love.window.getPixelScale()
+    self.boidSize = roadRadius/20
 
     colorToNum = {
     ["yellow"] = 0,
@@ -260,6 +267,17 @@ function Motorcade:setStart(v)
     for i, b in ipairs(self.boids) do
         b:setStart(v.x, v.y)
     end
+end
+
+function Motorcade:setBoidSize(v)
+    self.boidSize = v*self.pixelScale
+    for i, b in ipairs(self.boids) do
+        b:setSize(self.boidSize)
+    end
+end
+
+function Motorcade:setNeighborDistance(v)
+    self.neighborDist = v * self.pixelScale
 end
 
 function Motorcade:setPath(color, path)
@@ -282,7 +300,7 @@ function Motorcade:updatePath(vertices, graph, goal)
 end
 
 function Motorcade:separation(boid)
-    local neighborDist = 15
+    local neighborDist = self.neighborDist * .75
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
         if boid ~= v then
