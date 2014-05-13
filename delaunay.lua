@@ -126,6 +126,14 @@ function Edge:getMidPoint()
   return x, y
 end
 
+function Edge:getConnectedVertex(x)
+  if x == self.p1 then
+    return self.p2
+  else
+    return self.p1
+  end
+end
+
 --- Point class
 -- @type Point
 local Point = class()
