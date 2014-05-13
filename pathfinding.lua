@@ -89,4 +89,59 @@ function PathFinding.uniformCost(verts, adjMatrix, start, goal)
     return PathFinding.aStar(verts, adjMatrix, start, goal, "uniformCost")
 end
 
+function PathFinding.BFS(verts, adjMatrix, start, goal)
+    local frontier = {}
+    local explored = {}
+    
+    table.insert(frontier, start)
+
+    while #frontier ~= 0 do
+        
+        local node = frontier[1]
+        table.remove(frontier, 1)
+        
+        if node == goal then
+            table.insert(explored, node)
+            return explored
+        end
+
+        for i, e in ipairs(adjMatrix[node]) do
+            local u = e:getConnectedVertex(node)
+            if explored[u] == nil then
+                table.insert(explored, u)
+                table.insert(frontier, u)
+            end
+        end
+
+    end
+
+end
+
+function PathFinding.DFS(verts, adjMatrix, start, goal)
+    local frontier = {}
+    local explored = {}
+    
+    table.insert(frontier, start)
+
+    while #frontier ~= 0 do
+        
+        local node = frontier[#frontier]
+        table.remove(frontier, #frontier)
+        
+        if node == goal then
+            table.insert(explored, node)
+            return explored
+        end
+
+        for i, e in ipairs(adjMatrix[node]) do
+            local u = e:getConnectedVertex(node)
+            if explored[u] == nil then
+                table.insert(explored, u)
+                table.insert(frontier, u)
+            end
+        end
+
+    end
+end
+
 return PathFinding
