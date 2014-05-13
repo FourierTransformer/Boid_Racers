@@ -79,11 +79,38 @@ function GraphicalUserInterface:initVars()
     local ps = self.ps
 
     --------------------------------------
+    loveframes.SetState("boids")
+
     local panelWidth=300*ps
     local panel = loveframes.Create("panel")
     panel:SetSize(panelWidth, love.graphics.getHeight())
     panel:SetPos(love.graphics.getWidth()-panelWidth, 0)
+    panel:SetState("boids")
 
+             
+    local form = loveframes.Create("form", frame)
+    form:SetPos(love.graphics.getWidth()-panelWidth, 650*ps)
+    form:SetSize(panelWidth, 65*ps)
+    form:SetLayoutType("horizontal")
+    form:SetName("Settings")
+    form:SetState("boids")
+         
+    local settings1 = loveframes.Create("button")
+    settings1:SetText("Boids")
+    settings1:SetWidth((300/2-5)*ps)
+    settings1.OnClick = function (object)
+        loveframes.SetState("boids")
+    end
+    form:AddItem(settings1)
+
+
+    local settings2 = loveframes.Create("button")
+    settings2:SetText("Paths")
+    settings2:SetWidth((300/2-5)*ps)
+    settings2.OnClick = function (object)
+        loveframes.SetState("paths")
+    end
+    form:AddItem(settings2)
 
     -- Just text things apparently
     local list1 = loveframes.Create("list", frame)
@@ -91,6 +118,7 @@ function GraphicalUserInterface:initVars()
     list1:SetSize(300*ps, 70*ps)
     list1:SetPadding(20)
     list1:SetSpacing(10)
+    list1:SetState("boids")
 
     -- IT'S US!
     local text1 = loveframes.Create("text")
@@ -107,6 +135,7 @@ function GraphicalUserInterface:initVars()
     slider1:SetValue(60)
     slider1:SetText("A* Boids")
     slider1:SetDecimals(0)
+    slider1:SetState("boids")
 
     local s1text1 = loveframes.Create("text", panel)
     s1text1:SetPos(20*ps, 90*ps)
@@ -129,6 +158,7 @@ function GraphicalUserInterface:initVars()
     slider2:SetValue(60)
     slider2:SetText("GBFS Boids")
     slider2:SetDecimals(0)
+    slider2:SetState("boids")
 
     local s2text1 = loveframes.Create("text", panel)
     s2text1:SetPos(20*ps, 150*ps)
@@ -151,6 +181,7 @@ function GraphicalUserInterface:initVars()
     slider3:SetValue(60)
     slider3:SetText("Uniform Cost Boids")
     slider3:SetDecimals(0)
+    slider3:SetState("boids")
 
     local s3text1 = loveframes.Create("text", panel)
     s3text1:SetPos(20*ps, 200*ps)
@@ -173,6 +204,7 @@ function GraphicalUserInterface:initVars()
     slider4:SetValue(10)
     slider4:SetText("Boid Speed")
     slider4:SetDecimals(0)
+    slider4:SetState("boids")
 
     local s4text1 = loveframes.Create("text", panel)
     s4text1:SetPos(20*ps, 250*ps)
@@ -195,6 +227,7 @@ function GraphicalUserInterface:initVars()
     slider5:SetValue(25)
     slider5:SetText("Simulation Speed")
     slider5:SetDecimals(0)
+    slider5:SetState("boids")
 
     local s5text1 = loveframes.Create("text", panel)
     s5text1:SetPos(20*ps, 300*ps)
@@ -217,6 +250,7 @@ function GraphicalUserInterface:initVars()
     slider6:SetValue(25)
     slider6:SetText("Boid Seperation")
     slider6:SetDecimals(0)
+    slider6:SetState("boids")
 
     local s6text1 = loveframes.Create("text", panel)
     s6text1:SetPos(20*ps, 350*ps)
@@ -239,6 +273,7 @@ function GraphicalUserInterface:initVars()
     slider7:SetValue(25)
     slider7:SetText("Boid Cohesion")
     slider7:SetDecimals(0)
+    slider7:SetState("boids")
 
     local s7text1 = loveframes.Create("text", panel)
     s7text1:SetPos(20*ps, 400*ps)
@@ -261,6 +296,7 @@ function GraphicalUserInterface:initVars()
     slider8:SetValue(25)
     slider8:SetText("Boid Alignment")
     slider8:SetDecimals(0)
+    slider8:SetState("boids")
 
     local s8text1 = loveframes.Create("text", panel)
     s8text1:SetPos(20*ps, 450*ps)
@@ -275,19 +311,12 @@ function GraphicalUserInterface:initVars()
     end
     
     --------------------------------------
-    -- then a checkbox for Boid Separation
-    checkbox1 = loveframes.Create("checkbox", panel)
-    checkbox1:SetText("Boid Separation")
-    checkbox1:SetPos(20*ps, 550*ps)
-    checkbox1:SetFont(love.graphics.newFont(12*ps))
-    checkbox1:SetChecked(true)
-
-    --------------------------------------
 
     local panelWidth=300*ps
     local panel2 = loveframes.Create("panel")
     panel2:SetSize(panelWidth, 50)
     panel2:SetPos(love.graphics.getWidth()-panelWidth, 1000)
+    panel2:SetState("boids")
 
     button = loveframes.Create("button", panel2)
     -- button:SetPos(20*ps, 450*ps)
@@ -301,6 +330,59 @@ function GraphicalUserInterface:initVars()
     button.OnMouseExit = function(object)
         object:SetText("Generate Map")
     end 
+
+
+    --------------------------------------
+    --------------------------------------
+    --------------------------------------
+    --AND NOW FOR THE PATH SETTINGS-------
+    --------------------------------------
+    --------------------------------------
+    --------------------------------------
+    local ppanel = loveframes.Create("panel")
+    ppanel:SetSize(panelWidth, love.graphics.getHeight())
+    ppanel:SetPos(love.graphics.getWidth()-panelWidth, 0)
+    ppanel:SetState("paths")
+
+             
+    local pform = loveframes.Create("form", frame)
+    pform:SetPos(love.graphics.getWidth()-panelWidth, 650*ps)
+    pform:SetSize(panelWidth, 65*ps)
+    pform:SetLayoutType("horizontal")
+    pform:SetName("Settings")
+    pform:SetState("paths")
+         
+    local psettings1 = loveframes.Create("button")
+    psettings1:SetText("Boids")
+    psettings1:SetWidth((300/2-5)*ps)
+    psettings1.OnClick = function (object)
+        loveframes.SetState("boids")
+    end
+    pform:AddItem(psettings1)
+
+
+    local psettings2 = loveframes.Create("button")
+    psettings2:SetText("Paths")
+    psettings2:SetWidth((300/2-5)*ps)
+    psettings2.OnClick = function (object)
+        loveframes.SetState("paths")
+    end
+    pform:AddItem(psettings2)
+
+    -- Just text things apparently
+    local plist1 = loveframes.Create("list", frame)
+    plist1:SetPos(980*ps, 0)
+    plist1:SetSize(300*ps, 70*ps)
+    plist1:SetPadding(20)
+    plist1:SetSpacing(10)
+    plist1:SetState("paths")
+
+    -- IT'S US!
+    local ptext1 = loveframes.Create("text")
+    ptext1:SetFont(love.graphics.newFont(12*ps))
+    ptext1:SetText("BOID RACERS\nNate Balas & Shakil Thakur")
+    plist1:AddItem(ptext1)
+
 end 
 
 function GraphicalUserInterface:getAStarBoids()
