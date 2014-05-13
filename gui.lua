@@ -409,6 +409,58 @@ function GraphicalUserInterface:initVars()
         object:SetPos((290 - object:GetWidth())*ps, 90*ps)
         object:SetText(pslider1:GetValue())
     end
+    
+    --------------------------------------
+    -- Choose a pathfinding algo (Yellow)
+    local multichoice = loveframes.Create("multichoice", ppanel)
+    multichoice:SetPos(20*ps, 160*ps)
+    multichoice:SetWidth(270*ps)
+    multichoice:AddChoice("A*")
+    multichoice:AddChoice("GBFS")
+    multichoice:AddChoice("Uniform Cost")
+    multichoice:AddChoice("DFS")
+    multichoice:AddChoice("BFS")
+    multichoice:SetChoice("A*")
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 140*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText("Yellow Boids:")
+
+
+    --------------------------------------
+    -- Magenta
+    local multichoice = loveframes.Create("multichoice", ppanel)
+    multichoice:SetPos(20*ps, 220*ps)
+    multichoice:SetWidth(270*ps)
+    multichoice:AddChoice("A*")
+    multichoice:AddChoice("GBFS")
+    multichoice:AddChoice("Uniform Cost")
+    multichoice:AddChoice("DFS")
+    multichoice:AddChoice("BFS")
+    multichoice:SetChoice("GBFS")
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 200*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText("Magenta Boids:")
+
+    --------------------------------------
+    -- Cyan
+    local multichoice = loveframes.Create("multichoice", ppanel)
+    multichoice:SetPos(20*ps, 270*ps)
+    multichoice:SetWidth(270*ps)
+    multichoice:AddChoice("A*")
+    multichoice:AddChoice("GBFS")
+    multichoice:AddChoice("Uniform Cost")
+    multichoice:AddChoice("DFS")
+    multichoice:AddChoice("BFS")
+    multichoice:SetChoice("Uniform Cost")
+
+    local ps1text1 = loveframes.Create("text", ppanel)
+    ps1text1:SetPos(20*ps, 250*ps)
+    ps1text1:SetFont(love.graphics.newFont(10*ps))
+    ps1text1:SetText("Magenta Boids:")
 
 end 
 
