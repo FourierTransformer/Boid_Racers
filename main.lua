@@ -19,17 +19,13 @@ local roadRadius
 local borderSize
 local pause = false
 
-function love.load()
-    -- SETTING IT UP!
-    love.window.setTitle("Boid Racers")
-    love.window.setMode(1280, 720, {highdpi = true})
-
+local function startSimulation()
     -- CONSTANTS BITCHES
     math.randomseed( os.time() )
-    vertDistro = {math.random(10, 20), math.random(10, 20), math.random(10, 20), math.random(10, 20)} --for each quadrant
+    vertDistro = {math.random(10, 50), math.random(10, 50), math.random(10, 50), math.random(10, 50)} --for each quadrant
     numberVerts = 0
     for i, v in ipairs(vertDistro) do numberVerts = numberVerts + v end
-    local width, height = love.graphics.getDimensions()
+    local width, height = love.graphics.getDimensions() --10000, 10000
     width = width - (300 * love.window.getPixelScale())
     roadRadius = 20 * love.window.getPixelScale()
     borderSize = roadRadius/10
@@ -84,6 +80,14 @@ function love.load()
     -- get the GUI class to reference later
     local ps = love.window.getPixelScale()
     GUI = GraphicalUserInterface:new(ps)
+end 
+
+function love.load()
+    -- SETTING IT UP!
+    love.window.setTitle("Boid Racers")
+    love.window.setMode(1280, 720, {highdpi = true})
+    -- Run the Simulation
+    startSimulation()
 end
 
 function love.keypressed(key)
@@ -93,6 +97,10 @@ function love.keypressed(key)
  end
 
 function love.update(dt)
+    -- Check to see if we need to restart the simulation
+    if GUI:getRestart() == "Loading" then
+        startSimulation()
+    end
     if pause then 
         dt = 0
     end

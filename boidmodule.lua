@@ -141,6 +141,12 @@ local colorToNum = {
     ["magenta"] = 0,
     ["cyan"] = 0,
 }
+-- looks up the color for a certain algorithm
+local algoToColor = {
+    ["aStar"]   = "yellow",
+    ["GBFS"]    = "magenta",
+    ["uniform"] = "cyan",
+}
 --- `Boid` class
 -- @type Boid
 local Boid = class()
@@ -295,26 +301,25 @@ function Motorcade:update(dt, doSeperation, boidSpeed, aStarNum, GBFSNum, unifor
         end
     end 
     -- Change the amount of boids on screen according to the sliders
-    -- Possible TODO: Make the algorithm colors dynamic in a dictonary
-    if aStarNum < colorToNum["yellow"] then 
-        self:remove(colorToNum["yellow"] - aStarNum, "yellow" )
-    elseif aStarNum > colorToNum["yellow"] then
-        self:add(startX, startY, colorToPath["yellow"], aStarNum - colorToNum["yellow"], "yellow") 
-    end 
-    if GBFSNum < colorToNum["magenta"] then 
-        self:remove(colorToNum["magenta"] - GBFSNum, "magenta" )
-    elseif GBFSNum > colorToNum["magenta"] then
-        self:add(startX, startY, colorToPath["magenta"], GBFSNum - colorToNum["magenta"], "magenta") 
-    end 
-    if uniformNum < colorToNum["cyan"] then 
-        self:remove(colorToNum["cyan"] - uniformNum, "cyan" )
-    elseif uniformNum > colorToNum["cyan"] then
-        self:add(startX, startY, colorToPath["cyan"], uniformNum - colorToNum["cyan"], "cyan") 
-    end 
+    local aStarColor  = algoToColor["aStar"]
+    local GBFSColor   = algoToColor["GBFS"]
+    local uniform     = algoToColor["uniform"]
+
+    self:adjustNumBoids(startX, startY, aStarNum, colorToNum[aStarColor], aStarColor, colorToPath[aStarColor] )
+    self:adjustNumBoids(startX, startY, GBFSNum, colorToNum[GBFSColor], GBFSColor, colorToPath[GBFSColor] )
+    self:adjustNumBoids(startX, startY, uniformNum, colorToNum[uniform], uniform, colorToPath[uniform] )
 
     -- Change boid speed if needed
     self:changeMaxSpeed(boidSpeed)
 end
+
+function Motorcade:adjustNumBoids(startX, startY, newNum, oldNum, color, path)
+    if newNum < oldNum then 
+        self:remove(oldNum - newNum, color )
+    elseif newNum > oldNum then
+        self:add(startX, startY, path, newNum - oldNum, color) 
+    end     
+end 
 
 
 function Motorcade:draw()
@@ -329,7 +334,7 @@ function Motorcade:changeMaxSpeed(speed)
     end 
 end 
 
-
+-- TODO: Crashes when I change the number of boids with sliders. Should probably fix.
 function Motorcade:add(x, y, path, number, color)
     colorToPath[color] = path
     colorToNum[color] = colorToNum[color] + number
