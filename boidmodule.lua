@@ -113,6 +113,10 @@ function Vector:scalarSub(scalar)
     return Vector:new(self.x-scalar,self.y-scalar)
 end
 
+function Vector:scalarDiv(scalar)
+    return Vector:new(self.x/scalar,self.y/scalar)
+end
+
 function Vector:upperLimit(limit)
     local x = self.x
     local y = self.y
@@ -230,7 +234,6 @@ end
 
 
 
-
 --- `Motorcade` class
 -- @type Motorcade
 local Motorcade = class()
@@ -280,7 +283,7 @@ end
 function Motorcade:separation(boid)
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
-        if b ~= v then
+        if boid ~= v then
             if (boid.position-v.position):length() < 15 then
                 c = c - (v.position - boid.position)
             end
@@ -289,19 +292,38 @@ function Motorcade:separation(boid)
     return c
 end
 
-function Motorcade:update(dt, doSeperation, boidSpeed, aStarNum, GBFSNum, uniformNum, startX, startY)
-    -- Do seperation if the box is checked otherwise no.
-    if doSeperation then
-        for i, b in ipairs(self.boids) do
-            -- rules go here
-            b.velocity = b.velocity + self:separation(b):scalarMult(dt)
-            b:update(dt, self.roadRadius)
-        end
-    else 
-        for i, b in ipairs(self.boids) do
-            b:update(dt, self.roadRadius)
+function Motorcade:cohesion(boid)
+    local neighborDist = 20
+    local averageSum = Vector:new(0,0)
+    local neighbors = 0
+
+    for i, v in ipairs(self.boids) do 
+        if boid ~= v then 
+            local distance = distance(boid.position,v.position)
+            if distance < neighborDist and distance > 0 then 
+                averageSum = averageSum + v.position
+                neighbors = neighbors + 1
+            end 
         end
     end 
+    if neighbors > 0 then 
+        avarageSum  = averageSum:scalarDiv(neighbors)
+        return boid:seek(averageSum)
+    else
+        return Vector:new(0,0)
+    end 
+end 
+
+function Motorcade:update(dt, cohesion, doSeperation, boidSpeed, aStarNum, GBFSNum, uniformNum, startX, startY)
+    -- Do seperation if the box is checked otherwise no.
+        for i, b in ipairs(self.boids) do
+            -- rules go here
+            local seperationMult = dt * (doSeperation/25)
+            local cohesionMult = dt * (cohesion/25)
+            b.velocity = b.velocity + self:separation(b):scalarMult(seperationMult)  
+            b.velocity = b.velocity + self:cohesion(b):scalarMult(cohesionMult)
+            b:update(dt, self.roadRadius)
+        end
     -- Change the amount of boids on screen according to the sliders
     local aStarColor  = algoToColor["aStar"]
     local GBFSColor   = algoToColor["GBFS"]
