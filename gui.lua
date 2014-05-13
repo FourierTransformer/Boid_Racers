@@ -193,7 +193,7 @@ function GraphicalUserInterface:initVars()
     slider5:SetWidth(270*ps)
     slider5:SetMinMax(0, 100)
     slider5:SetValue(25)
-    slider5:SetText("Demo Speed")
+    slider5:SetText("Simulation Speed")
     slider5:SetDecimals(0)
 
     local s5text1 = loveframes.Create("text", panel)
