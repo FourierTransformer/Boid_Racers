@@ -247,6 +247,7 @@ function Motorcade:__init(roadRadius)
     self.numAStar = 0
     self.numGBFS = 0
     self.numUniform = 0
+    self.neighborDist = 20
 
     colorToNum = {
     ["yellow"] = 0,
@@ -281,10 +282,11 @@ function Motorcade:updatePath(vertices, graph, goal)
 end
 
 function Motorcade:separation(boid)
+    local neighborDist = self.neighborDist
     local c = Vector:new(0, 0)
     for i, v in ipairs(self.boids) do
         if boid ~= v then
-            if (boid.position-v.position):length() < 15 then
+            if (boid.position-v.position):length() < neighborDist then
                 c = c - (v.position - boid.position)
             end
         end
@@ -293,7 +295,7 @@ function Motorcade:separation(boid)
 end
 
 function Motorcade:cohesion(boid)
-    local neighborDist = 20
+    local neighborDist = self.neighborDist
     local averageSum = Vector:new(0,0)
     local neighbors = 0
 
@@ -315,7 +317,7 @@ function Motorcade:cohesion(boid)
 end
 
 function Motorcade:alignment(boid)
-    local neighborDist = 20
+    local neighborDist = self.neighborDist
     local averageSum = Vector:new(0,0)
     local neighbors = 0
 
