@@ -92,24 +92,34 @@ end
 function PathFinding.BFS(verts, adjMatrix, start, goal)
     local frontier = {}
     local explored = {}
-    
-    table.insert(frontier, start)
 
-    while #frontier ~= 0 do
-        
-        local node = frontier[1]
+    frontier[ #frontier+1 ] = start  
+
+    while #frontier > 0 do
+        local current = frontier[1]
         table.remove(frontier, 1)
-        
-        if node == goal then
-            table.insert(explored, node)
+        explored[#explored+1] = current
+
+        if current == goal then
             return explored
         end
 
-        for i, e in ipairs(adjMatrix[node]) do
-            local u = e:getConnectedVertex(node)
-            if explored[u] == nil then
-                table.insert(explored, u)
-                table.insert(frontier, u)
+        for i=1, #verts do
+            local e = adjMatrix[current.id][i]
+            if e ~= nil then
+                local found = false
+                local u = e:getConnectedVertex(current)
+            
+                for j=1, #explored do
+                    if explored[j] == u then
+                        found = true
+                    end
+                end
+
+                if found == false then
+                    frontier[#frontier+1] = u
+                end
+            
             end
         end
 
@@ -121,23 +131,33 @@ function PathFinding.DFS(verts, adjMatrix, start, goal)
     local frontier = {}
     local explored = {}
     
-    table.insert(frontier, start)
+    frontier[ #frontier+1 ] = start
 
-    while #frontier ~= 0 do
-        
-        local node = frontier[#frontier]
+    while #frontier > 0 do
+        local current = frontier[#frontier]
         table.remove(frontier, #frontier)
-        
-        if node == goal then
-            table.insert(explored, node)
+        explored[#explored+1] = current
+
+        if current == goal then
             return explored
         end
 
-        for i, e in ipairs(adjMatrix[node]) do
-            local u = e:getConnectedVertex(node)
-            if explored[u] == nil then
-                table.insert(explored, u)
-                table.insert(frontier, u)
+        for i=1, #verts do
+            local e = adjMatrix[current.id][i]
+            if e ~= nil then
+                local found = false
+                local u = e:getConnectedVertex(current)
+            
+                for j=1, #explored do
+                    if explored[j] == u then
+                        found = true
+                    end
+                end
+
+                if found == false then
+                    frontier[#frontier+1] = u
+                end
+            
             end
         end
 

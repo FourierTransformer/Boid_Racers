@@ -52,47 +52,11 @@ end
 
 function GraphicalUserInterface:mouseReleased(x, y, button, start, goal)
     loveframes.mousereleased(x, y, button)
-
-    if button == "l" then
-        -- create vector with mouse coords
-        local mouseLoc = Vector:new(x, y)
-        if love.mouse.getCursor() == goalCursor then
-            local newGoal = findNearestVertex(mouseLoc)
-            if newGoal ~= nil then
-                goal = newGoal
-                updateGoal()
-            end
-        
-        -- if startCursor is changed
-        elseif love.mouse.getCursor() == startCursor then
-            local newStart = findNearestVertex(mouseLoc)
-            if newStart ~= nil then
-                start = newStart
-                updateStart()
-            end
-        end
-
-        -- set cursor back
-        love.mouse.setCursor()
-    end
 end
 
 function GraphicalUserInterface:mousePressed(x, y, button, start, goal)
   -- LOVEFRAMES
   loveframes.mousepressed(x, y, button)
-
-  if button == "l" then
-    local mouseVec = Vector:new(x,y)
-    
-    if distance(start, mouseVec) < 100 then
-      love.mouse.setCursor(startCursor)
-    end
-
-    if distance(goal, mouseVec) < 100 then
-      love.mouse.setCursor(goalCursor)
-    end
-
-  end
 end 
 
 function GraphicalUserInterface:update(dt)
