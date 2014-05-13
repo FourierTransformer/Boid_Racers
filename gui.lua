@@ -37,7 +37,10 @@ local slider1
 local slider2
 local slider3
 local slider4
-local checkbox1
+local slider5
+local slider6
+local slider7
+local slider8
 local button
 
 function GraphicalUserInterface:__init(ps)
@@ -48,7 +51,9 @@ function GraphicalUserInterface:__init(ps)
     self.uniformBoids   = slider3
     self.boidSpeed      = slider4
     self.demoSpeed      = slider5
-    self.seperation     = checkbox1
+    self.seperation     = slider6
+    self.cohesion       = slider7
+    self.alginment      = slider8
     self.restart        = button 
 end
 
@@ -188,7 +193,7 @@ function GraphicalUserInterface:initVars()
     slider5:SetWidth(270*ps)
     slider5:SetMinMax(0, 100)
     slider5:SetValue(25)
-    slider5:SetText("Demo Speed")
+    slider5:SetText("Simulation Speed")
     slider5:SetDecimals(0)
 
     local s5text1 = loveframes.Create("text", panel)
@@ -205,16 +210,86 @@ function GraphicalUserInterface:initVars()
 
     --------------------------------------
 
+    slider6 = loveframes.Create("slider", frame)
+    slider6:SetPos(1000*ps, 360*ps)
+    slider6:SetWidth(270*ps)
+    slider6:SetMinMax(0, 100)
+    slider6:SetValue(25)
+    slider6:SetText("Boid Seperation")
+    slider6:SetDecimals(0)
+
+    local s6text1 = loveframes.Create("text", panel)
+    s6text1:SetPos(20*ps, 350*ps)
+    s6text1:SetFont(love.graphics.newFont(10*ps))
+    s6text1:SetText(slider6:GetText())
+
+    local s6text2 = loveframes.Create("text", panel)
+    s6text2:SetFont(love.graphics.newFont(10*ps))
+    s6text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 350*ps)
+        object:SetText(slider6:GetValue())
+    end
+
+    --------------------------------------
+
+    slider7 = loveframes.Create("slider", frame)
+    slider7:SetPos(1000*ps, 410*ps)
+    slider7:SetWidth(270*ps)
+    slider7:SetMinMax(0, 100)
+    slider7:SetValue(25)
+    slider7:SetText("Boid Cohesion")
+    slider7:SetDecimals(0)
+
+    local s7text1 = loveframes.Create("text", panel)
+    s7text1:SetPos(20*ps, 400*ps)
+    s7text1:SetFont(love.graphics.newFont(10*ps))
+    s7text1:SetText(slider7:GetText())
+
+    local s7text2 = loveframes.Create("text", panel)
+    s7text2:SetFont(love.graphics.newFont(10*ps))
+    s7text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 400*ps)
+        object:SetText(slider7:GetValue())
+    end
+
+    --------------------------------------
+
+    slider8 = loveframes.Create("slider", frame)
+    slider8:SetPos(1000*ps, 460*ps)
+    slider8:SetWidth(270*ps)
+    slider8:SetMinMax(0, 100)
+    slider8:SetValue(25)
+    slider8:SetText("Boid Alignment")
+    slider8:SetDecimals(0)
+
+    local s8text1 = loveframes.Create("text", panel)
+    s8text1:SetPos(20*ps, 450*ps)
+    s8text1:SetFont(love.graphics.newFont(10*ps))
+    s8text1:SetText(slider8:GetText())
+
+    local s8text2 = loveframes.Create("text", panel)
+    s8text2:SetFont(love.graphics.newFont(10*ps))
+    s8text2.Update = function(object, dt)
+        object:SetPos((290 - object:GetWidth())*ps, 450*ps)
+        object:SetText(slider8:GetValue())
+    end
+    
+    --------------------------------------
     -- then a checkbox for Boid Separation
     checkbox1 = loveframes.Create("checkbox", panel)
     checkbox1:SetText("Boid Separation")
-    checkbox1:SetPos(20*ps, 390*ps)
+    checkbox1:SetPos(20*ps, 550*ps)
     checkbox1:SetFont(love.graphics.newFont(12*ps))
     checkbox1:SetChecked(true)
 
     --------------------------------------
-         
-    button = loveframes.Create("button", panel)
+
+    local panelWidth=300*ps
+    local panel2 = loveframes.Create("panel")
+    panel2:SetSize(panelWidth, 50)
+    panel2:SetPos(love.graphics.getWidth()-panelWidth, 1000)
+
+    button = loveframes.Create("button", panel2)
     -- button:SetPos(20*ps, 450*ps)
     button:SetWidth(500)
     button:SetHeight(50)
@@ -245,7 +320,7 @@ function GraphicalUserInterface:getBoidSpeed()
 end 
 
 function GraphicalUserInterface:getSeperation()
-	return self.seperation:GetChecked()
+	return self.seperation:GetValue()
 end 
 
 function GraphicalUserInterface:getDemoSpeed()
@@ -254,6 +329,14 @@ end
 
 function GraphicalUserInterface:getRestart()
     return self.restart:GetText()
+end 
+
+function GraphicalUserInterface:getCohesion()
+    return self.cohesion:GetValue()
+end 
+
+function GraphicalUserInterface:getAlignment()
+    return self.alginment:GetValue()
 end 
 GUI = {
     GraphicalUserInterface = GraphicalUserInterface,
