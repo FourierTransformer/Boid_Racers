@@ -82,6 +82,24 @@ end
 
 function GraphicalUserInterface:draw()
     loveframes.draw()
+    local ps = love.window.getPixelScale()
+    -- On top of the GUI, all covered in cheese. I found these three colors, when somebody sneezed!
+    if loveframes.GetState() == "boids" then
+        -- Yellow AStar
+        love.graphics.setColor(255, 255, 0)
+        love.graphics.setPointSize(5*ps)
+        love.graphics.point(1002*ps, 95*ps)
+
+        -- Magenta GBFS
+        love.graphics.setColor(255, 0, 255)
+        love.graphics.setPointSize(5*ps)
+        love.graphics.point(1002*ps, 155*ps)
+
+        -- Cyan Uniform Cost
+        love.graphics.setColor(0, 255, 255)
+        love.graphics.setPointSize(5*ps)
+        love.graphics.point(1002*ps, 205*ps)
+    end
 end 
 
 function GraphicalUserInterface:initVars()
