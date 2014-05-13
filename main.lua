@@ -40,7 +40,8 @@ function startSimulation()
     for i, v in ipairs(vertDistro) do numberVerts = numberVerts + v end
     local width, height = love.graphics.getDimensions() --10000, 10000
     width = width - (300 * love.window.getPixelScale())
-    roadRadius = 20 * love.window.getPixelScale()
+    roadRadius = 2000/numberVerts * love.window.getPixelScale()
+    -- roadRadius = 20 * love.window.getPixelScale()
     borderSize = roadRadius/10
 
     -- Cursors
