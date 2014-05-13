@@ -195,9 +195,9 @@ function loveframes.update(dt)
 			end
 		end
 	else
-		if curcursor ~= arrow and not loveframes.resizeobject then
-			love.mouse.setCursor(arrow)
-		end
+		-- if curcursor ~= arrow and not loveframes.resizeobject then
+		-- 	love.mouse.setCursor(arrow)
+		-- end
 	end
 	
 	loveframes.collisions = {}

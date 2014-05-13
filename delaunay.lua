@@ -128,9 +128,9 @@ end
 
 function Edge:getConnectedVertex(x)
   if x == self.p1 then
-    return p2
+    return self.p2
   else
-    return p1
+    return self.p1
   end
 end
 
