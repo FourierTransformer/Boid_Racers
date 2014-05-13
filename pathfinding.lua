@@ -89,4 +89,79 @@ function PathFinding.uniformCost(verts, adjMatrix, start, goal)
     return PathFinding.aStar(verts, adjMatrix, start, goal, "uniformCost")
 end
 
+function PathFinding.BFS(verts, adjMatrix, start, goal)
+    local frontier = {}
+    local explored = {}
+
+    frontier[ #frontier+1 ] = start  
+
+    while #frontier > 0 do
+        local current = frontier[1]
+        table.remove(frontier, 1)
+        explored[#explored+1] = current
+
+        if current == goal then
+            return explored
+        end
+
+        for i=1, #verts do
+            local e = adjMatrix[current.id][i]
+            if e ~= nil then
+                local found = false
+                local u = e:getConnectedVertex(current)
+            
+                for j=1, #explored do
+                    if explored[j] == u then
+                        found = true
+                    end
+                end
+
+                if found == false then
+                    frontier[#frontier+1] = u
+                end
+            
+            end
+        end
+
+    end
+
+end
+
+function PathFinding.DFS(verts, adjMatrix, start, goal)
+    local frontier = {}
+    local explored = {}
+    
+    frontier[ #frontier+1 ] = start
+
+    while #frontier > 0 do
+        local current = frontier[#frontier]
+        table.remove(frontier, #frontier)
+        explored[#explored+1] = current
+
+        if current == goal then
+            return explored
+        end
+
+        for i=1, #verts do
+            local e = adjMatrix[current.id][i]
+            if e ~= nil then
+                local found = false
+                local u = e:getConnectedVertex(current)
+            
+                for j=1, #explored do
+                    if explored[j] == u then
+                        found = true
+                    end
+                end
+
+                if found == false then
+                    frontier[#frontier+1] = u
+                end
+            
+            end
+        end
+
+    end
+end
+
 return PathFinding
