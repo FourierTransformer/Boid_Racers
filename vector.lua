@@ -84,3 +84,5 @@ function Vector:projection(b)
     local dot = self:dot(b)
     return b:scalarMult(dot), dot
 end
+
+return Vector
