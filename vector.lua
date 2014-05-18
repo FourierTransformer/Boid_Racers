@@ -1,3 +1,11 @@
+#!/usr/bin/env lua
+---------------
+-- ## Peaque, Lua module for a vector
+-- @author Shakil Thakur and Nate Balas
+-- @copyright 2014
+-- @license MIT
+-- @script vector
+
 local class = require "libs/middleclass/middleclass"
 
 --- `Vector` class
