@@ -5,33 +5,13 @@
 -- @copyright 2014
 -- @license MIT
 -- @script Boid
-require 'loveframes'
+require 'libs/LoveFrames'
+local class = require 'libs/middleclass/middleclass'
 local BoidModule  = require 'boidmodule'
 local Vector      = BoidModule.Vector
 
--- ================
--- Private helpers
--- ================
-
-local setmetatable = setmetatable
-local tostring     = tostring
-local unpack       = unpack
-
--- Internal class constructor
-local class = function(...)
-local klass = {}
-klass.__index = klass
-klass.__call = function(_,...) return klass:new(...) end
-function klass:new(...)
-    local instance = setmetatable({}, klass)
-    klass.__init(instance, ...)
-    return instance
-end
-return setmetatable(klass,{__call = klass.__call})
-end
-
 -- Create GUI class 
-local GraphicalUserInterface = class()
+local GraphicalUserInterface = class("GraphicalUserInterface")
 
 local slider1
 local slider2
@@ -48,7 +28,7 @@ local button2
 
 local pslider1
 
-function GraphicalUserInterface:__init(ps)
+function GraphicalUserInterface:initialize(ps)
     self.ps             = ps
     self:initVars()
     self.aStarBoids     = slider1
