@@ -3,7 +3,7 @@ local Map         = require 'map'
 local PathFinding = require 'pathfinding'
 local BoidModule  = require 'boidmodule'
 local Motorcade   = BoidModule.Motorcade
-local Vector      = BoidModule.Vector
+local Vector      = require 'vector'
 local GraphicalUserInterface = require 'gui'
 
 -- variables for this file
