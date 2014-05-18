@@ -5,8 +5,9 @@
 -- @copyright 2014
 -- @license MIT
 -- @script Boid
-require 'libs/LoveFrames'
 local class = require 'libs/middleclass/middleclass'
+
+require 'libs/LoveFrames'
 local BoidModule  = require 'boidmodule'
 local Vector      = BoidModule.Vector
 
