@@ -12,31 +12,6 @@ local Triangle = Delaunay.Triangle
 local Point    = Delaunay.Point
 local Edge     = Delaunay.Edge
 
--- ================
--- Private helpers
--- ================
-
-local setmetatable = setmetatable
-local tostring     = tostring
-local assert       = assert
-local unpack       = unpack
-local remove       = table.remove
-local sqrt         = math.sqrt
-local max          = math.max
-
--- Internal class constructor
-local class = function(...)
-  local klass = {}
-  klass.__index = klass
-  klass.__call = function(_,...) return klass:new(...) end
-  function klass:new(...)
-    local instance = setmetatable({}, klass)
-    klass.__init(instance, ...)
-    return instance
-  end
-  return setmetatable(klass,{__call = klass.__call})
-end
-
 local Voronoi = {
     _VERSION = "SUPER-BETA"
 }
