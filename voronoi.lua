@@ -7,7 +7,7 @@
 -- @script voronoi
 
 -- modules and stuff
-local Delaunay = require 'Delaunay'
+local Delaunay = require 'delaunay'
 local Triangle = Delaunay.Triangle
 local Point    = Delaunay.Point
 local Edge     = Delaunay.Edge
