@@ -9,10 +9,6 @@
 local Peaque = require 'Peaque'
 local Heap   = Peaque.Heap
 
-local PathFinding = {
-    _VERSION = "SUPER-BETA"
-}
-
 local function constructPath(cameFrom, currentNode)
     local final  = {}
     while cameFrom[currentNode] ~= nil do
@@ -163,5 +159,9 @@ function PathFinding.DFS(verts, adjMatrix, start, goal)
 
     end
 end
+
+local PathFinding = {
+    _VERSION = "SUPER-BETA"
+}
 
 return PathFinding
