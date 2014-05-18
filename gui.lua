@@ -535,8 +535,4 @@ function GraphicalUserInterface:getNeighborlyDistance()
     return self.neighbordDist:GetValue()
 end 
 
-GUI = {
-    GraphicalUserInterface = GraphicalUserInterface,
-    _VERSION = "SUPER-BETA"
-}
-return GUI
+return GraphicalUserInterface
