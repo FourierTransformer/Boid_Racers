@@ -9,7 +9,6 @@ local class = require 'libs/middleclass/middleclass'
 
 require 'libs/LoveFrames'
 local BoidModule  = require 'boidmodule'
-local Vector      = BoidModule.Vector
 
 -- Create GUI class 
 local GraphicalUserInterface = class("GraphicalUserInterface")
