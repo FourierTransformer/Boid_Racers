@@ -1,6 +1,5 @@
 -- modules and stuff
-local MapModule   = require 'mapmodule'
-local Map         = MapModule.Map
+local Map         = require 'map'
 local PathFinding = require 'pathfinding'
 local BoidModule  = require 'boidmodule'
 local Motorcade   = BoidModule.Motorcade

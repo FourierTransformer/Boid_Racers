@@ -215,8 +215,4 @@ function Map:clearPathCanvas()
     self.pathColors = {}
 end
 
-MapModule = {
-    Map = Map,
-    _VERSION = "SUPER-BETA"
-}
-return MapModule
+return Map
