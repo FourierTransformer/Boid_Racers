@@ -1,0 +1,9 @@
+[submodule "libs/middleclass"]
+	path = libs/middleclass
+	url = https://github.com/kikito/middleclass.git
+[submodule "libs/LoveFrames"]
+	path = libs/LoveFrames
+	url = https://github.com/NikolaiResokav/LoveFrames.git
+[submodule "libs/delaunay"]
+	path = libs/delaunay
+	url = https://github.com/Yonaba/delaunay.git

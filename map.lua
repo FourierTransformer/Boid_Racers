@@ -6,31 +6,10 @@
 -- @license MIT?
 -- @script CartD
 
+local class    = require 'libs/middleclass/middleclass'
 local Delaunay = require 'Delaunay'
 local Point    = Delaunay.Point
 local Voronoi  = require 'Voronoi'
-
-
--- ================
--- Private helpers
--- ================
-
-local setmetatable = setmetatable
-local tostring     = tostring
-local unpack       = unpack
-
--- Internal class constructor
-local class = function(...)
-local klass = {}
-klass.__index = klass
-klass.__call = function(_,...) return klass:new(...) end
-function klass:new(...)
-    local instance = setmetatable({}, klass)
-    klass.__init(instance, ...)
-    return instance
-end
-return setmetatable(klass,{__call = klass.__call})
-end
 
 local function halton(i, b)
     local result = 0
@@ -124,9 +103,9 @@ local function drawEdges(edges)
     end
 end
 
-local Map = class()
+local Map = class("Map")
 
-function Map:__init(roadRadius, width, height)
+function Map:initialize(roadRadius, width, height)
     self.roadRadius = roadRadius
     self.width = width
     self.height = height
@@ -236,8 +215,4 @@ function Map:clearPathCanvas()
     self.pathColors = {}
 end
 
-MapModule = {
-    Map = Map,
-    _VERSION = "SUPER-BETA"
-}
-return MapModule
+return Map

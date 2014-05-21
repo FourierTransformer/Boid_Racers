@@ -1,12 +1,10 @@
 -- modules and stuff
-local MapModule   = require 'mapmodule'
-local Map         = MapModule.Map
+local Map         = require 'map'
 local PathFinding = require 'pathfinding'
 local BoidModule  = require 'boidmodule'
 local Motorcade   = BoidModule.Motorcade
-local Vector      = BoidModule.Vector
-local GUI         = require 'gui'
-local GraphicalUserInterface = GUI.GraphicalUserInterface
+local Vector      = require 'vector'
+local GraphicalUserInterface = require 'gui'
 
 -- variables for this file
 local start

@@ -5,36 +5,11 @@
 -- @copyright 2014
 -- @license MIT
 -- @script peaque
-
--- ================
--- Private helpers
--- ================
-
-local setmetatable = setmetatable
-local tostring     = tostring
-local assert       = assert
-local unpack       = unpack
-local remove       = table.remove
-local sqrt         = math.sqrt
-local max          = math.max
-local floor        = math.floor
-
--- Internal class constructor
-local class = function(...)
-  local klass = {}
-  klass.__index = klass
-  klass.__call = function(_,...) return klass:new(...) end
-  function klass:new(...)
-    local instance = setmetatable({}, klass)
-    klass.__init(instance, ...)
-    return instance
-  end
-  return setmetatable(klass,{__call = klass.__call})
-end
+local class = require 'libs/middleclass/middleclass'
 
 -- get the parent's index
 local function parent(i)
-    return floor(i/2)
+    return math.floor(i/2)
 end
 
 -- get the left child's index
@@ -121,7 +96,7 @@ end
 
 --- `Node` class
 -- @type Node
-local Node = class()
+local Node = class("Node")
 Node.__eq = function(a, b) return (a.Key == b.Key and a.Data == b.Data) end
 Node.__tostring = function(n) return (('Node Key :%s'):format(tostring(n.key))) end
 
@@ -136,13 +111,13 @@ Node.__tostring = function(n) return (('Node Key :%s'):format(tostring(n.key))) 
 -- local n = Node:new(4, "a")
 -- print(n) -- prints out the key
 --
-function Node:__init(data, key)
+function Node:initialize(data, key)
     self.key, self.data = key, data
 end
 
 --- `Heap` class
 -- @type Heap
-local Heap = class()
+local Heap = class("Heap")
 -- TODO: should definitely finish this...
 -- Heap.__eq = function(a, b) return  end
 Heap.__tostring = function(e)
@@ -162,7 +137,7 @@ end
 -- local h = Heap:new()
 -- local h = h:insert(node)
 --
-function Heap:__init()
+function Heap:initialize()
   A = {}
 end
 
@@ -185,7 +160,7 @@ function Heap:pop()
     assert(#A > 0, "Heap is currently empty, there is nothing to pop")
     local max = A[1]
     A[1] = A[#A]
-    remove(A, #A)
+    table.remove(A, #A)
     -- maxHeapify(A, 1)
     minHeapify(A, 1)
     return max.data
@@ -209,7 +184,8 @@ end
 
 local Peaque = {
     Heap        = Heap,
-    _VERSION    = ".1"
+    Node        = Node,
+    _VERSION    = ".1.1"
 }
 
 return Peaque
